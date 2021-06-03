@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,60 +15,52 @@ namespace Doppler.Contact.Policies.Data.Access.Core
 {
     public abstract class GenericRepository<T> : IGenericRepository<T> where T : class
     {
-        protected readonly string _tableName;
-        private readonly IConfiguration _configuration;
+        public string TableName { get; set; }
+        private readonly string _connectionString;
+
         private IEnumerable<PropertyInfo> GetProperties => typeof(T).GetProperties();
 
-        protected GenericRepository(string tableName)
+        protected GenericRepository(IOptions<DopplerDataBaseSettings> dopplerDataBaseSettings)
         {
-            _tableName = tableName;
+            _connectionString = dopplerDataBaseSettings.Value.GetSqlConnectionString();
         }
-        /// <summary>
-        /// Generate new connection based on connection string
-        /// </summary>
-        /// <returns></returns>
-        private SqlConnection SqlConnection()
-        {
-            throw new NotImplementedException();
-            //return new SqlConnection(ConfigurationManager.ConnectionStrings["MainDb"].ConnectionString);
-        }
+
 
         /// <summary>
         /// Open new connection and return it for use
         /// </summary>
         /// <returns></returns>
-        private IDbConnection CreateConnection()
+        private async Task<IDbConnection> GetConnection()
         {
-            var conn = SqlConnection();
-            conn.Open();
-            return conn;
+            using var cn = new SqlConnection(_connectionString);
+            await cn.OpenAsync();
+            return cn;
         }
 
-  
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            using (var connection = CreateConnection())
+            using (var connection = await GetConnection())
             {
-                return await connection.QueryAsync<T>($"SELECT * FROM {_tableName}");
+                return await connection.QueryAsync<T>($"SELECT * FROM {TableName}");
             }
         }
 
         public async Task DeleteRowAsync(Guid id)
         {
-            using (var connection = CreateConnection())
+            using (var connection = await GetConnection())
             {
-                await connection.ExecuteAsync($"DELETE FROM {_tableName} WHERE Id=@Id", new { Id = id });
+                await connection.ExecuteAsync($"DELETE FROM {TableName} WHERE Id=@Id", new { Id = id });
             }
         }
 
         public async Task<T> GetAsync(Guid id)
         {
-            using (var connection = CreateConnection())
+            using (var connection = await GetConnection())
             {
-                var result = await connection.QuerySingleOrDefaultAsync<T>($"SELECT * FROM {_tableName} WHERE Id=@Id", new { Id = id });
+                var result = await connection.QuerySingleOrDefaultAsync<T>($"SELECT * FROM {TableName} WHERE Id=@Id", new { Id = id });
                 if (result == null)
-                    throw new KeyNotFoundException($"{_tableName} with id [{id}] could not be found.");
+                    throw new KeyNotFoundException($"{TableName} with id [{id}] could not be found.");
 
                 return result;
             }
@@ -77,7 +70,7 @@ namespace Doppler.Contact.Policies.Data.Access.Core
         {
             var inserted = 0;
             var query = GenerateInsertQuery();
-            using (var connection = CreateConnection())
+            using (var connection = await GetConnection())
             {
                 inserted += await connection.ExecuteAsync(query, list);
             }
@@ -90,7 +83,7 @@ namespace Doppler.Contact.Policies.Data.Access.Core
         {
             var insertQuery = GenerateInsertQuery();
 
-            using (var connection = CreateConnection())
+            using (var connection = await GetConnection())
             {
                 await connection.ExecuteAsync(insertQuery, t);
             }
@@ -98,7 +91,7 @@ namespace Doppler.Contact.Policies.Data.Access.Core
 
         private string GenerateInsertQuery()
         {
-            var insertQuery = new StringBuilder($"INSERT INTO {_tableName} ");
+            var insertQuery = new StringBuilder($"INSERT INTO {TableName} ");
 
             insertQuery.Append("(");
 
@@ -122,7 +115,7 @@ namespace Doppler.Contact.Policies.Data.Access.Core
         {
             var updateQuery = GenerateUpdateQuery();
 
-            using (var connection = CreateConnection())
+            using (var connection = await GetConnection())
             {
                 await connection.ExecuteAsync(updateQuery, t);
             }
@@ -130,7 +123,7 @@ namespace Doppler.Contact.Policies.Data.Access.Core
 
         private string GenerateUpdateQuery()
         {
-            var updateQuery = new StringBuilder($"UPDATE {_tableName} SET ");
+            var updateQuery = new StringBuilder($"UPDATE {TableName} SET ");
             var properties = GenerateListOfProperties(GetProperties);
 
             properties.ForEach(property =>

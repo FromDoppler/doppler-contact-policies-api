@@ -3,7 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31313.79
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "doppler-contact-policies-api", "doppler-contact-policies-api\doppler-contact-policies-api.csproj", "{47B0FC09-F20B-4083-B9AC-8A4F33C5DB2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doppler.Contact.Policies.Api", "doppler-contact-policies-api\Doppler.Contact.Policies.Api.csproj", "{47B0FC09-F20B-4083-B9AC-8A4F33C5DB2D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1-Presentation", "1-Presentation", "{F69FE549-15BD-4281-B22C-0169701B1837}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2-Business-Logic", "2-Business-Logic", "{A21E0949-711F-47A5-9697-40B8692B88DE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3-Data-Access", "3-Data-Access", "{E2E4CE35-BD70-4346-AE09-70ED8C9DCC00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doppler.Contact.Policies.Business.Logic", "Doppler.Contact.Policies.Business.Logic\Doppler.Contact.Policies.Business.Logic.csproj", "{CE672774-0E02-4359-A896-34FE8FAA2F45}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doppler.Contact.Policies.Data.Access", "Doppler.Contact.Policies.Data.Access\Doppler.Contact.Policies.Data.Access.csproj", "{2DAE9F8E-A044-4049-A434-54B3B567422B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doppler.Contact.Policies.Api.Test", "Doppler.Contact.Policies.Api.Test\Doppler.Contact.Policies.Api.Test.csproj", "{3D9E32B6-FFE7-445E-A07B-87BF6F2E7772}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doppler.Contact.Policies.Business.Logic.Test", "Doppler.Contact.Policies.Business.Logic.Test\Doppler.Contact.Policies.Business.Logic.Test.csproj", "{9A7F51B9-9A38-4C7B-B11C-CC61B4780B6D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doppler.Contact.Policies.Data.Access.Test", "Doppler.Contact.Policies.Data.Access.Test\Doppler.Contact.Policies.Data.Access.Test.csproj", "{5ABE939A-29C0-48FE-BB21-B723317B63A4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +31,37 @@ Global
 		{47B0FC09-F20B-4083-B9AC-8A4F33C5DB2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47B0FC09-F20B-4083-B9AC-8A4F33C5DB2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47B0FC09-F20B-4083-B9AC-8A4F33C5DB2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE672774-0E02-4359-A896-34FE8FAA2F45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE672774-0E02-4359-A896-34FE8FAA2F45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE672774-0E02-4359-A896-34FE8FAA2F45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE672774-0E02-4359-A896-34FE8FAA2F45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DAE9F8E-A044-4049-A434-54B3B567422B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DAE9F8E-A044-4049-A434-54B3B567422B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DAE9F8E-A044-4049-A434-54B3B567422B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DAE9F8E-A044-4049-A434-54B3B567422B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D9E32B6-FFE7-445E-A07B-87BF6F2E7772}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D9E32B6-FFE7-445E-A07B-87BF6F2E7772}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D9E32B6-FFE7-445E-A07B-87BF6F2E7772}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D9E32B6-FFE7-445E-A07B-87BF6F2E7772}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A7F51B9-9A38-4C7B-B11C-CC61B4780B6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A7F51B9-9A38-4C7B-B11C-CC61B4780B6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A7F51B9-9A38-4C7B-B11C-CC61B4780B6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A7F51B9-9A38-4C7B-B11C-CC61B4780B6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5ABE939A-29C0-48FE-BB21-B723317B63A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ABE939A-29C0-48FE-BB21-B723317B63A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ABE939A-29C0-48FE-BB21-B723317B63A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ABE939A-29C0-48FE-BB21-B723317B63A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{47B0FC09-F20B-4083-B9AC-8A4F33C5DB2D} = {F69FE549-15BD-4281-B22C-0169701B1837}
+		{CE672774-0E02-4359-A896-34FE8FAA2F45} = {A21E0949-711F-47A5-9697-40B8692B88DE}
+		{2DAE9F8E-A044-4049-A434-54B3B567422B} = {E2E4CE35-BD70-4346-AE09-70ED8C9DCC00}
+		{3D9E32B6-FFE7-445E-A07B-87BF6F2E7772} = {F69FE549-15BD-4281-B22C-0169701B1837}
+		{9A7F51B9-9A38-4C7B-B11C-CC61B4780B6D} = {A21E0949-711F-47A5-9697-40B8692B88DE}
+		{5ABE939A-29C0-48FE-BB21-B723317B63A4} = {E2E4CE35-BD70-4346-AE09-70ED8C9DCC00}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {15E80ADE-B8CA-47F1-A3B8-47DCA9AD46C3}

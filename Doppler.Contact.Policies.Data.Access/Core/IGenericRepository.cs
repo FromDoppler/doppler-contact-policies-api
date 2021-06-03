@@ -12,7 +12,7 @@ namespace Doppler.Contact.Policies.Data.Access.Core
         Task DeleteRowAsync(Guid id);
         Task<T> GetAsync(Guid id);
         Task<int> SaveRangeAsync(IEnumerable<T> list);
-        Task UpdateAsync(T t);
-        Task InsertAsync(T t);
+        Task<int> UpdateAsync(T t);
+        Task<int> InsertAsync(T t);
     }
 }

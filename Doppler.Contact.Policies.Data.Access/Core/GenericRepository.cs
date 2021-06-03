@@ -79,14 +79,15 @@ namespace Doppler.Contact.Policies.Data.Access.Core
         }
 
 
-        public async Task InsertAsync(T t)
+        public async Task<int> InsertAsync(T t)
         {
             var insertQuery = GenerateInsertQuery();
-
+            var inserted = 0;
             using (var connection = await GetConnection())
             {
-                await connection.ExecuteAsync(insertQuery, t);
+                inserted += await connection.ExecuteAsync(insertQuery, t);
             }
+            return inserted;
         }
 
         private string GenerateInsertQuery()
@@ -111,14 +112,16 @@ namespace Doppler.Contact.Policies.Data.Access.Core
             return insertQuery.ToString();
         }
 
-        public async Task UpdateAsync(T t)
+        public async Task<int> UpdateAsync(T t)
         {
             var updateQuery = GenerateUpdateQuery();
+            var inserted = 0;
 
             using (var connection = await GetConnection())
             {
-                await connection.ExecuteAsync(updateQuery, t);
+                inserted += await connection.ExecuteAsync(updateQuery, t);
             }
+            return inserted;
         }
 
         private string GenerateUpdateQuery()

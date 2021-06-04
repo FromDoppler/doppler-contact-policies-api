@@ -15,29 +15,8 @@ namespace Doppler.Contact.Policies.Data.Access.Test.Core
     {
 
         [Fact]
-        public async void GetAllAsync__xxxxxxxx____should_return_all_entities()
+        public void Test1()
         {
-
-            var student = new List<Student>() {
-            new Student(){ Id=1, Name="Juan"},
-            new Student(){ Id=1, Name="Johan"},
-            new Student(){ Id=1, Name="Lucia"},
-            };
-            // arrange
-           
-
-
-
-
-            var genericRepository = new GenericRepository<Student>(options);
-
-            //act
-            var allStudent = await genericRepository.GetAllAsync();
-
-            //assert
-            Assert.Equal(student.Count, allStudent.ToList().Count);
-
-
         }
     }
 }

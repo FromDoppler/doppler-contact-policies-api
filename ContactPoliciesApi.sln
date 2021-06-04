@@ -11,15 +11,20 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "2-Business-Logic", "2-Busin
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3-Data-Access", "3-Data-Access", "{E2E4CE35-BD70-4346-AE09-70ED8C9DCC00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doppler.Contact.Policies.Business.Logic", "Doppler.Contact.Policies.Business.Logic\Doppler.Contact.Policies.Business.Logic.csproj", "{CE672774-0E02-4359-A896-34FE8FAA2F45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doppler.Contact.Policies.Business.Logic", "Doppler.Contact.Policies.Business.Logic\Doppler.Contact.Policies.Business.Logic.csproj", "{CE672774-0E02-4359-A896-34FE8FAA2F45}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doppler.Contact.Policies.Data.Access", "Doppler.Contact.Policies.Data.Access\Doppler.Contact.Policies.Data.Access.csproj", "{2DAE9F8E-A044-4049-A434-54B3B567422B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doppler.Contact.Policies.Data.Access", "Doppler.Contact.Policies.Data.Access\Doppler.Contact.Policies.Data.Access.csproj", "{2DAE9F8E-A044-4049-A434-54B3B567422B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doppler.Contact.Policies.Api.Test", "Doppler.Contact.Policies.Api.Test\Doppler.Contact.Policies.Api.Test.csproj", "{3D9E32B6-FFE7-445E-A07B-87BF6F2E7772}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doppler.Contact.Policies.Api.Test", "Doppler.Contact.Policies.Api.Test\Doppler.Contact.Policies.Api.Test.csproj", "{3D9E32B6-FFE7-445E-A07B-87BF6F2E7772}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doppler.Contact.Policies.Business.Logic.Test", "Doppler.Contact.Policies.Business.Logic.Test\Doppler.Contact.Policies.Business.Logic.Test.csproj", "{9A7F51B9-9A38-4C7B-B11C-CC61B4780B6D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doppler.Contact.Policies.Business.Logic.Test", "Doppler.Contact.Policies.Business.Logic.Test\Doppler.Contact.Policies.Business.Logic.Test.csproj", "{9A7F51B9-9A38-4C7B-B11C-CC61B4780B6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Doppler.Contact.Policies.Data.Access.Test", "Doppler.Contact.Policies.Data.Access.Test\Doppler.Contact.Policies.Data.Access.Test.csproj", "{5ABE939A-29C0-48FE-BB21-B723317B63A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doppler.Contact.Policies.Data.Access.Test", "Doppler.Contact.Policies.Data.Access.Test\Doppler.Contact.Policies.Data.Access.Test.csproj", "{5ABE939A-29C0-48FE-BB21-B723317B63A4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FCD1FBE9-BC27-40C6-8563-AB3960B0CD56}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace Doppler.Contact.Policies.Data.Access
 {

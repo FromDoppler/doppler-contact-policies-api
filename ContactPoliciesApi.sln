@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31313.79
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doppler.Contact.Policies.Api", "doppler-contact-policies-api\Doppler.Contact.Policies.Api.csproj", "{47B0FC09-F20B-4083-B9AC-8A4F33C5DB2D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Doppler.Contact.Policies.Api", "Doppler.Contact.Policies.Api\Doppler.Contact.Policies.Api.csproj", "{47B0FC09-F20B-4083-B9AC-8A4F33C5DB2D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "1-Presentation", "1-Presentation", "{F69FE549-15BD-4281-B22C-0169701B1837}"
 EndProject

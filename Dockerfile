@@ -29,7 +29,7 @@ FROM build AS test
 RUN dotnet test
 
 FROM build AS publish
-RUN dotnet publish "./doppler-contact-policies-api/Doppler.Contact.Policies.Api.csproj" -c Release -o /app/publish
+RUN dotnet publish "./Doppler.Contact.Policies.Api/Doppler.Contact.Policies.Api.csproj" -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:5.0-buster-slim AS final
 # We need these changes in openssl.cnf to access to our SQL Server instances in QA and INT environments

@@ -46,6 +46,8 @@ namespace doppler_contact_policies_api
 
             app.UseHttpsRedirection();
 
+            app.UseStaticFiles();
+
             app.UseRouting();
 
             app.UseAuthorization();

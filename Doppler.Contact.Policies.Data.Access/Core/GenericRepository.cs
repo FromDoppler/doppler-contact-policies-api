@@ -13,14 +13,14 @@ using System.Threading.Tasks;
 
 namespace Doppler.Contact.Policies.Data.Access.Core
 {
-    public abstract class GenericRepository<T> : IGenericRepository<T> where T : class
+    public  class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         public string TableName { get; set; }
         private readonly string _connectionString;
 
         private IEnumerable<PropertyInfo> GetProperties => typeof(T).GetProperties();
 
-        protected GenericRepository(IOptions<DopplerDataBaseSettings> dopplerDataBaseSettings)
+        public GenericRepository(IOptions<DopplerDataBaseSettings> dopplerDataBaseSettings)
         {
             _connectionString = dopplerDataBaseSettings.Value.GetSqlConnectionString();
         }

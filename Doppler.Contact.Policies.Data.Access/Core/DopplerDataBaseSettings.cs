@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Doppler.Contact.Policies.Data.Access.Core
 {
-  public  class DopplerDataBaseSettings
+  public  class DopplerDataBaseSettings: IDopplerDataBaseSettings
     {
         public string ConnectionString { get; set; }
 

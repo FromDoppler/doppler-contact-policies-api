@@ -1,4 +1,4 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System;
@@ -13,55 +13,43 @@ using System.Threading.Tasks;
 
 namespace Doppler.Contact.Policies.Data.Access.Core
 {
-    public  class GenericRepository<T> : IGenericRepository<T> where T : class
+    public class GenericRepository<T> : IGenericRepository<T> where T : class
     {
         public string TableName { get; set; }
-        private readonly string _connectionString;
+        private readonly IDatabaseConnectionFactory _databaseConnectionFactory;
 
         private IEnumerable<PropertyInfo> GetProperties => typeof(T).GetProperties();
 
-        public GenericRepository(IOptions<DopplerDataBaseSettings> dopplerDataBaseSettings)
+        public GenericRepository(IDatabaseConnectionFactory databaseConnectionFactory)
         {
-            _connectionString = dopplerDataBaseSettings.Value.GetSqlConnectionString();
+            _databaseConnectionFactory = databaseConnectionFactory;
         }
 
-
-        /// <summary>
-        /// Open new connection and return it for use
-        /// </summary>
-        /// <returns></returns>
-        private async Task<IDbConnection> GetConnection()
-        {
-            using var cn = new SqlConnection(_connectionString);
-            await cn.OpenAsync();
-            return cn;
-        }
-
+        #region public methods
 
         public async Task<IEnumerable<T>> GetAllAsync()
         {
-            using (var connection = await GetConnection())
+            using (var connection = await _databaseConnectionFactory.GetConnection())
             {
                 return await connection.QueryAsync<T>($"SELECT * FROM {TableName}");
             }
         }
 
-        public async Task DeleteRowAsync(Guid id)
+        public async Task DeleteRowAsync(long id)
         {
-            using (var connection = await GetConnection())
+            using (var connection = await _databaseConnectionFactory.GetConnection())
             {
-                await connection.ExecuteAsync($"DELETE FROM {TableName} WHERE Id=@Id", new { Id = id });
+                await connection.ExecuteAsync($"DELETE FROM {TableName} WHERE Id=@Id", new {Id = id});
             }
         }
 
-        public async Task<T> GetAsync(Guid id)
+        public async Task<T> GetAsync(long id)
         {
-            using (var connection = await GetConnection())
+            using (var connection = await _databaseConnectionFactory.GetConnection())
             {
-                var result = await connection.QuerySingleOrDefaultAsync<T>($"SELECT * FROM {TableName} WHERE Id=@Id", new { Id = id });
-                if (result == null)
-                    throw new KeyNotFoundException($"{TableName} with id [{id}] could not be found.");
-
+                var result =
+                    await connection.QuerySingleOrDefaultAsync<T>($"SELECT * FROM {TableName} WHERE Id=@Id",
+                        new {Id = id});
                 return result;
             }
         }
@@ -70,7 +58,7 @@ namespace Doppler.Contact.Policies.Data.Access.Core
         {
             var inserted = 0;
             var query = GenerateInsertQuery();
-            using (var connection = await GetConnection())
+            using (var connection = await _databaseConnectionFactory.GetConnection())
             {
                 inserted += await connection.ExecuteAsync(query, list);
             }
@@ -83,12 +71,17 @@ namespace Doppler.Contact.Policies.Data.Access.Core
         {
             var insertQuery = GenerateInsertQuery();
             var inserted = 0;
-            using (var connection = await GetConnection())
+            using (var connection = await _databaseConnectionFactory.GetConnection())
             {
                 inserted += await connection.ExecuteAsync(insertQuery, t);
             }
+
             return inserted;
         }
+
+        #endregion
+
+        #region private methods
 
         private string GenerateInsertQuery()
         {
@@ -117,10 +110,11 @@ namespace Doppler.Contact.Policies.Data.Access.Core
             var updateQuery = GenerateUpdateQuery();
             var inserted = 0;
 
-            using (var connection = await GetConnection())
+            using (var connection = await _databaseConnectionFactory.GetConnection())
             {
                 inserted += await connection.ExecuteAsync(updateQuery, t);
             }
+
             return inserted;
         }
 
@@ -150,5 +144,7 @@ namespace Doppler.Contact.Policies.Data.Access.Core
                     where attributes.Length <= 0 || (attributes[0] as DescriptionAttribute)?.Description != "ignore"
                     select prop.Name).ToList();
         }
+
+        #endregion
     }
 }

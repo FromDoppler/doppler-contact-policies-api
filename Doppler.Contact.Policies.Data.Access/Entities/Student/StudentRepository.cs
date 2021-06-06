@@ -1,4 +1,4 @@
-﻿using Doppler.Contact.Policies.Data.Access.Core;
+using Doppler.Contact.Policies.Data.Access.Core;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,7 @@ namespace Doppler.Contact.Policies.Data.Access.Entities.Student
     public class StudentRepository : GenericRepository<Student>, IStudentRepository
     {
 
-        public StudentRepository(IOptions<DopplerDataBaseSettings> dopplerDataBaseSettings) : base(dopplerDataBaseSettings)
+        public StudentRepository(IDatabaseConnectionFactory dataBaseConnectionFactory) : base(dataBaseConnectionFactory)
         {
             TableName = "Student";
         }

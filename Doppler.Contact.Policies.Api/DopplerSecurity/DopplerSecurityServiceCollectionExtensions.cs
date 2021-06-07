@@ -15,6 +15,7 @@ namespace doppler_contact_policies_api.DopplerSecurity
         public static IServiceCollection AddDopplerSecurity(this IServiceCollection services)
         {
             services.AddSingleton<IAuthorizationHandler, IsSuperUserAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationHandler, IsOwnResourceAuthorizationHandler>();
 
             services.AddOptions<AuthorizationOptions>()
                   .Configure(o =>
@@ -50,6 +51,7 @@ namespace doppler_contact_policies_api.DopplerSecurity
                     o.DefaultPolicy = simpleAuthenticationPolicy;
 
                       o.AddPolicy(Policies.ONLY_SUPERUSER, onlySuperUserPolicy);
+                      o.AddPolicy(Policies.OWN_RESOURCE_OR_SUPERUSER, ownResourceOrSuperUserPolicy);
                   });
 
             services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)

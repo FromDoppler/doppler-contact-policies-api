@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using doppler_contact_policies_api.DopplerSecurity;
 
 namespace doppler_contact_policies_api
 {
@@ -25,7 +26,7 @@ namespace doppler_contact_policies_api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddDopplerSecurity();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

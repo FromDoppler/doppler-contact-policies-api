@@ -49,7 +49,7 @@ namespace doppler_contact_policies_api
                         Array.Empty<string>()
                     }
                 });
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "doppler_contact_policies_api", Version = "v1"});
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "doppler_contact_policies_api", Version = "v1" });
             });
         }
 

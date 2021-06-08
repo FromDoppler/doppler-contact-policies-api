@@ -15,9 +15,12 @@ namespace doppler_contact_policies_api
 {
     public class Startup
     {
+        private readonly string _baseUrl;
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+            _baseUrl = Configuration.GetValue<string>("BaseURL");
         }
 
         public IConfiguration Configuration { get; }
@@ -30,6 +33,7 @@ namespace doppler_contact_policies_api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "doppler_contact_policies_api", Version = "v1" });
+                if (!string.IsNullOrEmpty(_baseUrl)) { c.AddServer(new OpenApiServer() { Url = _baseUrl }); };
             });
         }
 

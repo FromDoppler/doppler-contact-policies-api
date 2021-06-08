@@ -49,7 +49,7 @@ namespace doppler_contact_policies_api.DopplerSecurity
                 return true;
             }
 
-            if (routeData.Values.TryGetValue("accountname", out var accountname) &&
+            if (routeData.Values.TryGetValue("accountName", out var accountname) &&
                 accountname?.ToString() == GetTokenUniqueName(context.User))
             {
                 // TODO: In case of using different public keys, for example Doppler and Relay,

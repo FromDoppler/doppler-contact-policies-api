@@ -21,10 +21,10 @@ namespace doppler_contact_policies_api.Controllers
         }
 
         [Authorize(Policies.OWN_RESOURCE_OR_SUPERUSER)]
-        [HttpGet("/accounts/{accountname}/contact-policies")]
-        public string GetContactPolicies(string accountname)
+        [HttpGet("/accounts/{accountName}/contact-policies")]
+        public string GetContactPolicies(string accountName)
         {
-            return $"Hello! \"you\" that have access to the account with accountname '{accountname}'";
+            return $"Hello! \"you\" that have access to the account with accountname '{accountName}'";
         }
     }
 }

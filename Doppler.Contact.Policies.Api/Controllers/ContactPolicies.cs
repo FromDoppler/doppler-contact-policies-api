@@ -14,7 +14,14 @@ namespace doppler_contact_policies_api.Controllers
     public class ContactPolicies : ControllerBase
     {
         [Authorize(Policies.OWN_RESOURCE_OR_SUPERUSER)]
-        [HttpGet("/accounts/{accountname}/hello")]
+        [HttpGet("/accounts/{clientId:long:min(1)}/contact-policies")]
+        public string GetContactPolicies(long accountId)
+        {
+            return $"Hello! \"you\" that have access to the account with ID '{accountId}'";
+        }
+
+        [Authorize(Policies.OWN_RESOURCE_OR_SUPERUSER)]
+        [HttpGet("/accounts/{accountname}/contact-policies")]
         public string GetContactPolicies(string accountname)
         {
             return $"Hello! \"you\" that have access to the account with accountname '{accountname}'";

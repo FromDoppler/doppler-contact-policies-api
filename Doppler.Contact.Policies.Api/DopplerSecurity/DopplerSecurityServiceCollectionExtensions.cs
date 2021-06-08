@@ -17,6 +17,8 @@ namespace doppler_contact_policies_api.DopplerSecurity
             services.AddSingleton<IAuthorizationHandler, IsSuperUserAuthorizationHandler>();
             services.AddSingleton<IAuthorizationHandler, IsOwnResourceAuthorizationHandler>();
 
+            services.ConfigureOptions<ConfigureDopplerSecurityOptions>();
+
             services.AddOptions<AuthorizationOptions>()
                   .Configure(o =>
                   {

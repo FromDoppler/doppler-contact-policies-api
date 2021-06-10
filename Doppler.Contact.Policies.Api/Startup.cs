@@ -66,7 +66,7 @@ namespace doppler_contact_policies_api
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "doppler_contact_policies_api v1"));
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("v1/swagger.json", "doppler_contact_policies_api v1"));
 
             app.UseStaticFiles();
 

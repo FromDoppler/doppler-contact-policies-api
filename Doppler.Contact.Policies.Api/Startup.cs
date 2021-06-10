@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using doppler_contact_policies_api.DopplerSecurity;
 
 namespace doppler_contact_policies_api
 {
@@ -28,10 +29,29 @@ namespace doppler_contact_policies_api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.AddDopplerSecurity();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
+                c.AddSecurityDefinition("Bearer",
+                    new OpenApiSecurityScheme
+                    {
+                        In = ParameterLocation.Header,
+                        Description = "Please enter the token into field as 'Bearer {token}'",
+                        Name = "Authorization",
+                        Type = SecuritySchemeType.ApiKey,
+                        Scheme = "Bearer"
+                    });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference {Id = "Bearer", Type = ReferenceType.SecurityScheme},
+                        },
+                        Array.Empty<string>()
+                    }
+                });
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "doppler_contact_policies_api", Version = "v1" });
                 if (!string.IsNullOrEmpty(_baseUrl)) { c.AddServer(new OpenApiServer() { Url = _baseUrl }); };
             });
@@ -43,9 +63,10 @@ namespace doppler_contact_policies_api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "doppler_contact_policies_api v1"));
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "doppler_contact_policies_api v1"));
 
             app.UseStaticFiles();
 
@@ -53,10 +74,7 @@ namespace doppler_contact_policies_api
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

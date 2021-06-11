@@ -29,3 +29,4 @@ package-lock.json
 *.csproj.user
 *.key
 .doppler-ci
+*.png

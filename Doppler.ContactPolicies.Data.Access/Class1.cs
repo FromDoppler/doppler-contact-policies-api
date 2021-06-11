@@ -1,6 +1,6 @@
 using System;
 
-namespace Doppler.Contact.Policies.Business.Logic
+namespace Doppler.ContactPolicies.Data.Access
 {
     public class Class1
     {

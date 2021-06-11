@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.IdentityModel.Tokens;
 
-namespace doppler_contact_policies_api.DopplerSecurity
+namespace Doppler.ContactPolicies.Api.DopplerSecurity
 {
     public class DopplerSecurityOptions
     {

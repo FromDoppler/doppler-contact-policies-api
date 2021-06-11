@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace Doppler.Contact.Policies.Business.Logic.Test
+namespace Doppler.ContactPolicies.Business.Logic.Test
 {
     public class UnitTest1
     {

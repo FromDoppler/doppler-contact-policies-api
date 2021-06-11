@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace doppler_contact_policies_api.DopplerSecurity
+namespace Doppler.ContactPolicies.Api.DopplerSecurity
 {
     public static class Policies
     {

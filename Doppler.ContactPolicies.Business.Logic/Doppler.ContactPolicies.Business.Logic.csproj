@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Doppler.Contact.Policies.Data.Access\Doppler.Contact.Policies.Data.Access.csproj" />
+    <ProjectReference Include="..\Doppler.ContactPolicies.Data.Access\Doppler.ContactPolicies.Data.Access.csproj" />
   </ItemGroup>
 
 </Project>

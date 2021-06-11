@@ -1,12 +1,17 @@
 # Use [REST Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) to run these requests
 
-@base=http://localhost:5000
-# @base=https://apis.fromdoppler.com/hello
-# @base=https://apisint.fromdoppler.net/hello
-# @base=https://apisqa.fromdoppler.net/hello
+# @base=http://localhost:5000
+# @base=https://apis.fromdoppler.com/contact-policies
+@base=https://apisint.fromdoppler.net/contact-policies
+# @base=https://apisqa.fromdoppler.net/contact-policies
 
-###
-GET {{base}}/swagger/index.html
 
-###
+### See current version
 GET {{base}}/version.txt
+
+@accountName = test
+@token = test
+
+### Get account's settings
+GET {{base}}/accounts/{{accountName}}/settings
+Authorization: Bearer {{token}}

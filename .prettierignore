@@ -29,4 +29,5 @@ package-lock.json
 *.csproj.user
 *.key
 .doppler-ci
+*.sql
 *.png

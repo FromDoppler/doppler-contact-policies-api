@@ -2,7 +2,11 @@
 
 ## Base de datos
 
+Se utilizará solo un subconjunto de las tablas de Doppler:
+
 ![image-20210610122125483](./contact-policies-db-subset.png)
+
+Ver [script-contact-policies.sql](script-contact-policies.sql) para un esquema básico.
 
 ### Tabla `UserShippingLimit`
 

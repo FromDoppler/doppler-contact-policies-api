@@ -10,7 +10,6 @@ namespace Doppler.ContactPolicies.Data.Access.Entities
     {
 
         public User User { get; set; }
-        public long IdUser { get; set; }
         public bool Enabled { get; set; }
         public bool Active { get; set; }
         public int Amount { get; set; }

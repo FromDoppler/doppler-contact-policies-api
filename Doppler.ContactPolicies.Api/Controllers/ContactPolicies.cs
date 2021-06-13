@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Doppler.ContactPolicies.Business.Logic.Services;
 using Doppler.ContactPolicies.Api.DopplerSecurity;
 using Microsoft.AspNetCore.Authorization;
 
@@ -13,11 +14,21 @@ namespace Doppler.ContactPolicies.Api.Controllers
     [ApiController]
     public class ContactPolicies : ControllerBase
     {
-        [Authorize(DopplerSecurity.Policies.OWN_RESOURCE_OR_SUPERUSER)]
-        [HttpGet("/accounts/{accountName}/settings")]
-        public string GetContactPoliciesSettings(string accountName)
+        private readonly IContactPoliciesService _contactPoliciesService;
+
+        public ContactPolicies(IContactPoliciesService contactPoliciesService)
         {
-            return $"Hello! \"you\" that have access to the account with accountName '{accountName}'";
+            _contactPoliciesService = contactPoliciesService;
+        }
+
+        [Authorize(Policies.OWN_RESOURCE_OR_SUPERUSER)]
+        [HttpGet("/accounts/{accountName}/settings")]
+        public async Task<IActionResult> GetContactPoliciesSettings(string accountName)
+        {
+            var contactPoliciesSettings = await _contactPoliciesService.GetContactPoliciesSettingsAsync(accountName);
+
+
+            return new OkObjectResult(contactPoliciesSettings);
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,25 +22,37 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
         public async Task<Entities.ContactPoliciesSettings> GetContactPoliciesSettingsAsync(string accountName)
         {
             using var connection = await _databaseConnectionFactory.GetConnection();
-            var query = @"select cp.IdUser, cp.Enabled,cp.Active,cp.Interval,cp.Amount,sl.IdSubscribersList, sl.Name
-                from [UserShippingLimit] cp 
+            var query = @"select cp.IdUser, cp.Enabled,cp.Active,cp.Interval,cp.Amount,u.IdUser,Email,sl.IdSubscribersList, sl.Name
+                from [User] u
+                inner join [UserShippingLimit] cp on u.IdUser=cp.IdUser 
                 inner join [SubscribersListXShippingLimit] sls on sls.IdUser = cp.IdUser
-                inner join [SubscribersList] sl on sl.IdSubscribersList = sls.IdSubscribersList";
+                inner join [SubscribersList] sl on sl.IdSubscribersList = sls.IdSubscribersList where u.Email=@Email";
+
+            var queryParams = new {Email = accountName};
+
             var contactPoliciesSettings = await connection
-                .QueryAsync<Entities.ContactPoliciesSettings, SubscribersList, Entities.ContactPoliciesSettings>(
-                    query, (contactPolicies, subscribers) =>
+                .QueryAsync<Entities.ContactPoliciesSettings, User, SubscribersList, Entities.ContactPoliciesSettings>(
+                    query, (contactPolicies, user, subscribers) =>
                     {
+                        contactPolicies.User = user;
                         contactPolicies.SubscribersLists ??= new List<SubscribersList>();
                         contactPolicies.SubscribersLists.Add(subscribers);
                         return contactPolicies;
-                    }, splitOn: "IdSubscribersList");
-            var result = contactPoliciesSettings.GroupBy(ct => ct.IdUser).Select(g =>
+                    }, queryParams, splitOn: "IdUser,IdSubscribersList");
+
+            Entities.ContactPoliciesSettings result = null;
+            var contactPoliciesSettingsEnumerable = contactPoliciesSettings.ToList();
+            if (contactPoliciesSettingsEnumerable.Any())
             {
-                var groupedPost = g.First();
-                groupedPost.SubscribersLists = g.Select(ct => ct.SubscribersLists.Single()).ToList();
-                return groupedPost;
-            });
-            return result.SingleOrDefault();
+                result = contactPoliciesSettingsEnumerable.GroupBy(ct => ct.User.IdUser).Select(g =>
+                {
+                    var groupedPost = g.First();
+                    groupedPost.SubscribersLists = g.Select(ct => ct.SubscribersLists.Single()).ToList();
+                    return groupedPost;
+                }).First();
+            }
+
+            return result;
         }
     }
 }

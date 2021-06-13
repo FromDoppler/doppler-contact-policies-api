@@ -1,16 +1,13 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Doppler.ContactPolicies.Data.Access.Core;
 using Doppler.ContactPolicies.Api.DopplerSecurity;
+using Doppler.ContactPolicies.Business.Logic.Services;
 
 namespace Doppler.ContactPolicies.Api
 {
@@ -29,6 +26,9 @@ namespace Doppler.ContactPolicies.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<DopplerDataBaseSettings>(Configuration.GetSection(nameof(DopplerDataBaseSettings)));
+            services.AddScoped<IContactPoliciesService,ContactPoliciesService>();
+            services.AddAccessData();
             services.AddDopplerSecurity();
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -52,8 +52,13 @@ namespace Doppler.ContactPolicies.Api
                         Array.Empty<string>()
                     }
                 });
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "doppler_contact_policies_api", Version = "v1" });
-                if (!string.IsNullOrEmpty(_baseUrl)) { c.AddServer(new OpenApiServer() { Url = _baseUrl }); };
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "doppler_contact_policies_api", Version = "v1"});
+                if (!string.IsNullOrEmpty(_baseUrl))
+                {
+                    c.AddServer(new OpenApiServer() {Url = _baseUrl});
+                }
+
+                ;
             });
         }
 

@@ -29,14 +29,16 @@ namespace Doppler.ContactPolicies.Api.Test
         [Theory]
         [InlineData("test1@test.com", TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518,
             HttpStatusCode.OK)]
-        public async Task GetContactPoliciesSettings_Should_ReturnOKWithContactPoliciesResponse_When_UserAccountNameIsFound(string accountName,
-            string token, HttpStatusCode expectedStatusCode)
+        public async Task
+            GetContactPoliciesSettings_Should_ReturnOKWithContactPoliciesResponse_When_UserAccountNameIsFoundAndContactPoliciesAreActivated(
+                string accountName,
+                string token, HttpStatusCode expectedStatusCode)
         {
             // Arrange
             var fixture = new Fixture();
             var expected = fixture.Build<ContactPoliciesSettings>()
-                .With(x => x.User, fixture.Build<User>()
-                    .With(x => x.Email, accountName).Create())
+                .With(x => x.AccountName, accountName)
+                .With(x => x.Active, true)
                 .Create();
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
@@ -60,7 +62,8 @@ namespace Doppler.ContactPolicies.Api.Test
             // Assert
             Assert.NotNull(response);
             Assert.Equal(expectedStatusCode, response.StatusCode);
-            Assert.Equal(expected.User.Email, contentObject?.User.Email);
+            Assert.Equal(expected.AccountName, contentObject?.AccountName);
+            Assert.True(contentObject?.Active);
         }
     }
 }

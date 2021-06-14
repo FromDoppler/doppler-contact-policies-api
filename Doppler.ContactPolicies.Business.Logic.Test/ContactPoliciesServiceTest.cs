@@ -20,8 +20,7 @@ namespace Doppler.ContactPolicies.Business.Logic.Test
             // Arrange
             var fixture = new Fixture();
             var expected = fixture.Build<ContactPoliciesSettings>()
-                .With(x => x.User, fixture.Build<User>()
-                    .With(x => x.Email, accountName).Create())
+                .With(x =>x.AccountName, accountName)
                 .Create();
 
             var contactPoliciesRepositoryMock = new Mock<IContactPoliciesSettingsRepository>();
@@ -35,7 +34,7 @@ namespace Doppler.ContactPolicies.Business.Logic.Test
 
             // Assert
             contactPoliciesRepositoryMock.Verify();
-            Assert.Equal(actual.User.Email, expected.User.Email);
+            Assert.Equal(actual.AccountName, expected.AccountName);
         }
 
         [Theory]

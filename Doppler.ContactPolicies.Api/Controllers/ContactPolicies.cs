@@ -27,6 +27,10 @@ namespace Doppler.ContactPolicies.Api.Controllers
         {
             var contactPoliciesSettings = await _contactPoliciesService.GetContactPoliciesSettingsAsync(accountName);
 
+            if (contactPoliciesSettings == null)
+            {
+                return NotFound($"No contact policies settings for account name: {accountName}");
+            }
 
             return new OkObjectResult(contactPoliciesSettings);
         }

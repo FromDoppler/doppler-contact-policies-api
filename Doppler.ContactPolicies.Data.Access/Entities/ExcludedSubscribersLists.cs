@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Doppler.ContactPolicies.Data.Access.Entities
 {
-    public class SubscribersList
+    public class ExcludedSubscribersLists
     {
-        public long IdSubscribersList { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
     }
 }

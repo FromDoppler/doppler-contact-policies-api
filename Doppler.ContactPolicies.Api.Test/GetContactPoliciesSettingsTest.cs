@@ -34,8 +34,6 @@ namespace Doppler.ContactPolicies.Api.Test
         {
             // Arrange
             var fixture = new Fixture();
-            fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
-            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
             var expected = fixture.Build<ContactPoliciesSettings>()
                 .With(x => x.User, fixture.Build<User>()
                     .With(x => x.Email, accountName).Create())

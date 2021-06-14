@@ -73,8 +73,6 @@ namespace Doppler.ContactPolicies.Api.Test
         {
             // Arrange
             var fixture = new Fixture();
-            fixture.Behaviors.Remove(new ThrowingRecursionBehavior());
-            fixture.Behaviors.Add(new OmitOnRecursionBehavior());
             var accountName = "test1@test.com";
             var contactPoliciesSettings = fixture.Create<ContactPoliciesSettings>();
 

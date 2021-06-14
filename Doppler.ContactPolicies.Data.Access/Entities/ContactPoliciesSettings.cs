@@ -9,11 +9,10 @@ namespace Doppler.ContactPolicies.Data.Access.Entities
     public sealed class ContactPoliciesSettings
     {
 
-        public User User { get; set; }
-        public bool Enabled { get; set; }
+        public string AccountName { get; set; }
         public bool Active { get; set; }
-        public int Amount { get; set; }
-        public int Interval { get; set; }
-        public List<SubscribersList> SubscribersLists { get; set; }
+        public int? EmailsAmountByInterval { get; set; }
+        public int? IntervalInDays { get; set; }
+        public List<ExcludedSubscribersLists> ExcludedSubscribersLists { get; set; }
     }
 }

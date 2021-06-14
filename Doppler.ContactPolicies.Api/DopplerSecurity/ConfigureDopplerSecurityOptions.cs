@@ -11,7 +11,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
-namespace doppler_contact_policies_api.DopplerSecurity
+namespace Doppler.ContactPolicies.Api.DopplerSecurity
 {
     public class ConfigureDopplerSecurityOptions : IConfigureOptions<DopplerSecurityOptions>
     {

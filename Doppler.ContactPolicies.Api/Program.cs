@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace doppler_contact_policies_api
+namespace Doppler.ContactPolicies.Api
 {
     public class Program
     {

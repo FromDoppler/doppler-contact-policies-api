@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Doppler.Contact.Policies.Api\Doppler.Contact.Policies.Api.csproj" />
+    <ProjectReference Include="..\Doppler.ContactPolicies.Api\Doppler.ContactPolicies.Api.csproj" />
   </ItemGroup>
 
 </Project>

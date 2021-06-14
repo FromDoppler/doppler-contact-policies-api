@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 
-namespace doppler_contact_policies_api.DopplerSecurity
+namespace Doppler.ContactPolicies.Api.DopplerSecurity
 {
     public class IsSuperUserAuthorizationHandler : AuthorizationHandler<DopplerAuthorizationRequirement>
     {

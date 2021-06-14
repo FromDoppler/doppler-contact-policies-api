@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 
-namespace doppler_contact_policies_api.DopplerSecurity
+namespace Doppler.ContactPolicies.Api.DopplerSecurity
 {
     public class DopplerAuthorizationRequirement : IAuthorizationRequirement
     {

@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>doppler_contact_policies_api</RootNamespace>
+    <RootNamespace>Doppler.ContactPolicies.Api</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Doppler.Contact.Policies.Business.Logic\Doppler.Contact.Policies.Business.Logic.csproj" />
+    <ProjectReference Include="..\Doppler.ContactPolicies.Business.Logic\Doppler.ContactPolicies.Business.Logic.csproj" />
   </ItemGroup>
 
 </Project>

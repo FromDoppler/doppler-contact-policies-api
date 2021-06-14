@@ -5,11 +5,11 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using doppler_contact_policies_api;
+using Doppler.ContactPolicies.Api;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Xunit;
 
-namespace Doppler.Contact.Policies.Api.Test
+namespace Doppler.ContactPolicies.Api.Test
 {
     public class Authorization : IClassFixture<WebApplicationFactory<Startup>>
     {

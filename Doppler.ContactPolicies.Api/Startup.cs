@@ -10,9 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using doppler_contact_policies_api.DopplerSecurity;
+using Doppler.ContactPolicies.Api.DopplerSecurity;
 
-namespace doppler_contact_policies_api
+namespace Doppler.ContactPolicies.Api
 {
     public class Startup
     {

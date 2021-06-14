@@ -1,7 +1,7 @@
 using System;
 using Xunit;
 
-namespace Doppler.Contact.Policies.Api.Test
+namespace Doppler.ContactPolicies.Data.Access.Test
 {
     public class UnitTest1
     {

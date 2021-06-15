@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoFixture;
 using Doppler.ContactPolicies.Api;
+using Doppler.ContactPolicies.Business.Logic.DTO;
 using Doppler.ContactPolicies.Business.Logic.Services;
 using Doppler.ContactPolicies.Data.Access.Entities;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -74,7 +75,7 @@ namespace Doppler.ContactPolicies.Api.Test
             // Arrange
             var fixture = new Fixture();
             var accountName = "test1@test.com";
-            var contactPoliciesSettings = fixture.Create<ContactPoliciesSettings>();
+            var contactPoliciesSettings = fixture.Create<ContactPoliciesSettingsDto>();
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
             contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsAsync(accountName)).ReturnsAsync(contactPoliciesSettings);

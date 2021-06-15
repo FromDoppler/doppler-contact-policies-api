@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Doppler.ContactPolicies.Data.Access.Entities;
+using Doppler.ContactPolicies.Business.Logic.DTO;
 
 namespace Doppler.ContactPolicies.Business.Logic.Services
 {
     public interface IContactPoliciesService
     {
-        Task<ContactPoliciesSettings> GetContactPoliciesSettingsAsync(string accountName);
+        Task<ContactPoliciesSettingsDto> GetContactPoliciesSettingsAsync(string accountName);
     }
 }

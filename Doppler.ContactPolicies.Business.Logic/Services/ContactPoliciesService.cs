@@ -1,4 +1,6 @@
 using System.Threading.Tasks;
+using Doppler.ContactPolicies.Business.Logic.DTO;
+using Doppler.ContactPolicies.Business.Logic.Extensions;
 using Doppler.ContactPolicies.Data.Access.Entities;
 using Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettings;
 
@@ -13,10 +15,10 @@ namespace Doppler.ContactPolicies.Business.Logic.Services
             _settingsRepository = settingsRepository;
         }
 
-        public async Task<ContactPoliciesSettings> GetContactPoliciesSettingsAsync(string accountName)
+        public async Task<ContactPoliciesSettingsDto> GetContactPoliciesSettingsAsync(string accountName)
         {
             var contactPoliciesSettings =
-                await _settingsRepository.GetContactPoliciesSettingsAsync(accountName);
+                (await _settingsRepository.GetContactPoliciesSettingsAsync(accountName)).ToDto();
             return contactPoliciesSettings;
         }
     }

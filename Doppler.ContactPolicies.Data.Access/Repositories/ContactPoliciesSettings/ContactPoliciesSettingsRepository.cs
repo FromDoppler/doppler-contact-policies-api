@@ -25,7 +25,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
         {
             using var connection = await _databaseConnectionFactory.GetConnection();
             var query =
-                @"select cp.IdUser, cp.Enabled, cp.Active, cp.Interval [IntervalInDays], cp.Amount [EmailsAmountByInterval], u.Email [AccountName]
+                @"select cp.IdUser, cp.Enabled [EnabledExcludedSubscribersList], cp.Active, cp.Interval [IntervalInDays], cp.Amount [EmailsAmountByInterval], u.Email [AccountName]
                 from [User] u
                 inner join [UserShippingLimit] cp on u.IdUser = cp.IdUser where u.Email = @Email;
                 select sl.IdSubscribersList [Id], sl.Name
@@ -35,53 +35,16 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
 
             var queryParams = new {Email = accountName};
             var multipleAsync = await connection.QueryMultipleAsync(query, queryParams);
-            var userWithContactPoliciesFound = (await multipleAsync.ReadAsync()).Select(x => new
-            {
-                x.AccountName,
-                x.Enabled,
-                x.Active,
-                x.EmailsAmountByInterval,
-                x.IntervalInDays
-            }).FirstOrDefault();
+            var contactPoliciesSettings =
+                (await multipleAsync.ReadAsync<Entities.ContactPoliciesSettings>()).FirstOrDefault();
 
-            Entities.ContactPoliciesSettings contactPoliciesResult = null;
-
-            if (userWithContactPoliciesFound != null)
+            if (contactPoliciesSettings is {EnabledExcludedSubscribersList: true})
             {
-                if (userWithContactPoliciesFound.Enabled)
-                {
-                    contactPoliciesResult = CreateBasicContactPoliciesSettings(userWithContactPoliciesFound.AccountName,
-                        userWithContactPoliciesFound.Active, userWithContactPoliciesFound.EmailsAmountByInterval,
-                        userWithContactPoliciesFound.IntervalInDays);
-                    contactPoliciesResult.ExcludedSubscribersLists = contactPoliciesResult.Active
-                        ? (await multipleAsync.ReadAsync<ExcludedSubscribersLists>()).ToList()
-                        : null;
-                }
-                else
-                {
-                    contactPoliciesResult = CreateBasicContactPoliciesSettings(userWithContactPoliciesFound.AccountName,
-                        userWithContactPoliciesFound.Active, null,
-                        null);
-                }
+                contactPoliciesSettings.ExcludedSubscribersLists =
+                    (await multipleAsync.ReadAsync<ExcludedSubscribersLists>()).ToList();
             }
 
-            return contactPoliciesResult;
-        }
-
-        #endregion
-
-        #region private methods
-
-        private Entities.ContactPoliciesSettings CreateBasicContactPoliciesSettings(string accountName, bool active,
-            int? emailsAmountByInterval, int? intervalInDays)
-        {
-            return new()
-            {
-                AccountName = accountName,
-                Active = active,
-                EmailsAmountByInterval = emailsAmountByInterval,
-                IntervalInDays = intervalInDays
-            };
+            return contactPoliciesSettings;
         }
 
         #endregion

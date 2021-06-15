@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using AutoFixture;
+using Doppler.ContactPolicies.Business.Logic.DTO;
 using Doppler.ContactPolicies.Business.Logic.Services;
 using Doppler.ContactPolicies.Data.Access.Entities;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -36,7 +37,7 @@ namespace Doppler.ContactPolicies.Api.Test
         {
             // Arrange
             var fixture = new Fixture();
-            var expected = fixture.Build<ContactPoliciesSettings>()
+            var expected = fixture.Build<ContactPoliciesSettingsDto>()
                 .With(x => x.AccountName, accountName)
                 .With(x => x.Active, true)
                 .Create();

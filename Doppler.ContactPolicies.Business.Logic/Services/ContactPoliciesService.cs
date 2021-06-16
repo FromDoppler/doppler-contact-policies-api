@@ -8,17 +8,17 @@ namespace Doppler.ContactPolicies.Business.Logic.Services
 {
     public class ContactPoliciesService : IContactPoliciesService
     {
-        private readonly IContactPoliciesSettingsRepository _settingsRepository;
+        private readonly IContactPoliciesSettingsRepository _contactPoliciesSettingsRepository;
 
-        public ContactPoliciesService(IContactPoliciesSettingsRepository settingsRepository)
+        public ContactPoliciesService(IContactPoliciesSettingsRepository contactPoliciesSettingsRepository)
         {
-            _settingsRepository = settingsRepository;
+            _contactPoliciesSettingsRepository = contactPoliciesSettingsRepository;
         }
 
         public async Task<ContactPoliciesSettingsDto> GetContactPoliciesSettingsAsync(string accountName)
         {
             var contactPoliciesSettings =
-                (await _settingsRepository.GetContactPoliciesSettingsAsync(accountName)).ToDto();
+                (await _contactPoliciesSettingsRepository.GetContactPoliciesSettingsAsync(accountName)).ToDto();
             return contactPoliciesSettings;
         }
     }

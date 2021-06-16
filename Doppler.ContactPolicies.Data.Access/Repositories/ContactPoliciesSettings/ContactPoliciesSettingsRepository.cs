@@ -24,10 +24,11 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
         public async Task<Entities.ContactPoliciesSettings> GetContactPoliciesSettingsAsync(string accountName)
         {
             using var connection = await _databaseConnectionFactory.GetConnection();
-            var query =
+            const string query =
                 @"select cp.IdUser, cp.Enabled [EnabledExcludedSubscribersList], cp.Active, cp.Interval [IntervalInDays], cp.Amount [EmailsAmountByInterval], u.Email [AccountName]
                 from [User] u
-                inner join [UserShippingLimit] cp on u.IdUser = cp.IdUser where u.Email = @Email;
+                left join [UserShippingLimit] cp on u.IdUser = cp.IdUser
+                where u.Email = @Email;
                 select sl.IdSubscribersList [Id], sl.Name
                 from [SubscribersListXShippingLimit] sls
                 inner join [SubscribersList] sl on sl.IdSubscribersList = sls.IdSubscribersList
@@ -38,7 +39,10 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
             var contactPoliciesSettings =
                 (await multipleAsync.ReadAsync<Entities.ContactPoliciesSettings>()).FirstOrDefault();
 
-            if (contactPoliciesSettings is {EnabledExcludedSubscribersList: true})
+            if (contactPoliciesSettings is {IdUser: null})
+                return null;
+
+            if (contactPoliciesSettings.EnabledExcludedSubscribersList)
             {
                 contactPoliciesSettings.ExcludedSubscribersLists =
                     (await multipleAsync.ReadAsync<ExcludedSubscribersLists>()).ToList();

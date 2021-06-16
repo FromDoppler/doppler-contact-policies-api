@@ -52,13 +52,11 @@ namespace Doppler.ContactPolicies.Api
                         Array.Empty<string>()
                     }
                 });
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "doppler_contact_policies_api", Version = "v1"});
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Doppler.ContactPolicies.Api", Version = "v1"});
                 if (!string.IsNullOrEmpty(_baseUrl))
                 {
                     c.AddServer(new OpenApiServer() {Url = _baseUrl});
                 }
-
-                ;
             });
         }
 
@@ -71,7 +69,7 @@ namespace Doppler.ContactPolicies.Api
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("v1/swagger.json", "doppler_contact_policies_api v1"));
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("v1/swagger.json", "Doppler.ContactPolicies.Api v1"));
 
             app.UseStaticFiles();
 

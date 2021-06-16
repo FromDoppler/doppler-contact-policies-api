@@ -54,7 +54,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
             var request = new HttpRequestMessage(HttpMethod.Get, url)
             {
-                Headers = {{"Authorization", $"Bearer {token}"}}
+                Headers = { { "Authorization", $"Bearer {token}" } }
             };
 
             // Act
@@ -87,7 +87,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
             var request = new HttpRequestMessage(HttpMethod.Get, url)
             {
-                Headers = {{"Authorization", $"Bearer {token}"}}
+                Headers = { { "Authorization", $"Bearer {token}" } }
             };
 
             // Act

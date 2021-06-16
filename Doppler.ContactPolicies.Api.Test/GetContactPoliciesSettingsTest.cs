@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -7,6 +8,7 @@ using AutoFixture;
 using Doppler.ContactPolicies.Business.Logic.DTO;
 using Doppler.ContactPolicies.Business.Logic.Services;
 using Doppler.ContactPolicies.Data.Access.Entities;
+using Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettings;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,11 +38,41 @@ namespace Doppler.ContactPolicies.Api.Test
                 string token, HttpStatusCode expectedStatusCode)
         {
             // Arrange
-            var fixture = new Fixture();
-            var expected = fixture.Build<ContactPoliciesSettingsDto>()
-                .With(x => x.AccountName, accountName)
-                .With(x => x.Active, true)
-                .Create();
+            var expectedContactPoliciesSetting =
+                SetUpExpectedContactPoliciesSetting(accountName, out var expectedResultAsString, true);
+
+            var contactPoliciesMock = new Mock<IContactPoliciesService>();
+            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsAsync(accountName)).ReturnsAsync(expectedContactPoliciesSetting);
+
+            var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
+            {
+                services.AddSingleton(contactPoliciesMock.Object);
+            })).CreateClient();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/accounts/{accountName}/settings")
+            {
+                Headers = {{"Authorization", $"Bearer {token}"}}
+            };
+
+            // Act
+            var response = await client.SendAsync(request);
+            var contentAsString = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            Assert.NotNull(response);
+            Assert.Equal(expectedStatusCode, response.StatusCode);
+            Assert.Contains(expectedResultAsString, contentAsString);
+        }
+
+        [Theory]
+        [InlineData("test1@test.com", TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518,
+            HttpStatusCode.NotFound)]
+        public async Task
+            GetContactPoliciesSettings_Should_ReturnNotFound_When_UserWithSameAccountNameIsNotFound(
+                string accountName, string token, HttpStatusCode expectedStatusCode)
+        {
+            // Arrange
+            ContactPoliciesSettingsDto expected = null;
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
             contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsAsync(accountName)).ReturnsAsync(expected);
@@ -57,14 +89,117 @@ namespace Doppler.ContactPolicies.Api.Test
 
             // Act
             var response = await client.SendAsync(request);
-            var contentObject =
-                (ContactPoliciesSettings) await response.Content.ReadFromJsonAsync(typeof(ContactPoliciesSettings));
 
             // Assert
             Assert.NotNull(response);
             Assert.Equal(expectedStatusCode, response.StatusCode);
-            Assert.Equal(expected.AccountName, contentObject?.AccountName);
-            Assert.True(contentObject?.Active);
+        }
+
+        [Theory]
+        [InlineData("test1@test.com", TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518,
+            HttpStatusCode.OK)]
+        public async Task
+            GetContactPoliciesSettings_Should_ReturnOKWithContactPoliciesSettings_When_UserWithSameAccountNameIsFoundAndContactPoliciesIsNotActivated(
+                string accountName, string token, HttpStatusCode expectedStatusCode)
+        {
+            // Arrange
+            var expectedContactPoliciesSetting =
+                SetUpExpectedContactPoliciesSetting(accountName, out var expectedResultAsString, false);
+
+            var contactPoliciesMock = new Mock<IContactPoliciesService>();
+            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsAsync(accountName))
+                .ReturnsAsync(expectedContactPoliciesSetting);
+
+            var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
+            {
+                services.AddSingleton(contactPoliciesMock.Object);
+            })).CreateClient();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/accounts/{accountName}/settings")
+            {
+                Headers = {{"Authorization", $"Bearer {token}"}}
+            };
+
+            // Act
+            var response = await client.SendAsync(request);
+            var contentAsString = await response.Content.ReadAsStringAsync();
+
+
+            // Assert
+            Assert.Equal(expectedStatusCode, response.StatusCode);
+            Assert.Contains(expectedResultAsString, contentAsString);
+        }
+
+
+        [Theory]
+        [InlineData("test1@test.com", TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518,
+            HttpStatusCode.OK)]
+        public async Task
+            GetContactPoliciesSettings_Should_ReturnOKWithExcludedSubscribersListsAsNull_When_UserWithSameAccountNameIsFoundAndContactPoliciesIsNotEnabled(
+                string accountName, string token, HttpStatusCode expectedStatusCode)
+        {
+
+            var expectedContactPoliciesDto = new ContactPoliciesSettingsDto()
+            {
+                AccountName = accountName,
+                Active = false,
+                EmailsAmountByInterval = null,
+                IntervalInDays = null,
+                ExcludedSubscribersLists = null
+            };
+            const string expectedResultAsString =
+                "accountName\":\"test1@test.com\",\"active\":false,\"emailsAmountByInterval\":null,\"intervalInDays\":null,\"excludedSubscribersLists\":null}";
+
+            var contactPoliciesServiceMock = new Mock<IContactPoliciesService>();
+            contactPoliciesServiceMock.Setup(x => x.GetContactPoliciesSettingsAsync(accountName))
+                .ReturnsAsync(expectedContactPoliciesDto).Verifiable();
+
+
+            var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
+            {
+                services.AddSingleton(contactPoliciesServiceMock.Object);
+            })).CreateClient();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/accounts/{accountName}/settings")
+            {
+                Headers = {{"Authorization", $"Bearer {token}"}}
+            };
+
+            // Act
+            var response = await client.SendAsync(request);
+            var contentAsString = await response.Content.ReadAsStringAsync();
+
+
+            // Assert
+            contactPoliciesServiceMock.Verify();
+            Assert.Equal(expectedStatusCode, response.StatusCode);
+            Assert.Contains(expectedResultAsString, contentAsString);
+        }
+
+        private ContactPoliciesSettingsDto SetUpExpectedContactPoliciesSetting(string accountName,
+            out string expectedResultAsString, bool isActive)
+        {
+            var expectedContactPoliciesSetting = new ContactPoliciesSettingsDto()
+            {
+                Active = isActive,
+                AccountName = accountName,
+                EmailsAmountByInterval = 100,
+                IntervalInDays = 10,
+                ExcludedSubscribersLists = new List<ExcludedSubscribersLists>()
+                {
+                    new ExcludedSubscribersLists()
+                    {
+                        Id = 34, Name = "Listado_Marketing"
+                    },
+                    new ExcludedSubscribersLists()
+                    {
+                        Id = 169, Name = "Testing_ExcludeList"
+                    }
+                }
+            };
+            expectedResultAsString =
+                $"accountName\":\"test1@test.com\",\"active\":{isActive.ToString().ToLower()},\"emailsAmountByInterval\":100,\"intervalInDays\":10,\"excludedSubscribersLists\":[{{\"id\":34,\"name\":\"Listado_Marketing\"}},{{\"id\":169,\"name\":\"Testing_ExcludeList\"}}]}}";
+            return expectedContactPoliciesSetting;
         }
     }
 }

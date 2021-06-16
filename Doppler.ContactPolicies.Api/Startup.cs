@@ -52,10 +52,10 @@ namespace Doppler.ContactPolicies.Api
                         Array.Empty<string>()
                     }
                 });
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Doppler.ContactPolicies.Api", Version = "v1"});
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Doppler.ContactPolicies.Api", Version = "v1" });
                 if (!string.IsNullOrEmpty(_baseUrl))
                 {
-                    c.AddServer(new OpenApiServer() {Url = _baseUrl});
+                    c.AddServer(new OpenApiServer() { Url = _baseUrl });
                 }
             });
         }

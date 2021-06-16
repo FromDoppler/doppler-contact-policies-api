@@ -21,8 +21,7 @@ namespace Doppler.ContactPolicies.Api.Controllers
             _contactPoliciesService = contactPoliciesService;
         }
 
-        // [Authorize(Policies.OWN_RESOURCE_OR_SUPERUSER)]
-        [AllowAnonymous]
+        [Authorize(Policies.OWN_RESOURCE_OR_SUPERUSER)]
         [HttpGet("/accounts/{accountName}/settings")]
         public async Task<IActionResult> GetContactPoliciesSettings(string accountName)
         {

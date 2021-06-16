@@ -39,8 +39,10 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
             var contactPoliciesSettings =
                 (await multipleAsync.ReadAsync<Entities.ContactPoliciesSettings>()).FirstOrDefault();
 
-            if (contactPoliciesSettings is {IdUser: null})
+            if (contactPoliciesSettings == null)
                 return null;
+            if (contactPoliciesSettings.IdUser == null)
+                return contactPoliciesSettings;
 
             if (contactPoliciesSettings.EnabledExcludedSubscribersList)
             {

@@ -21,7 +21,8 @@ namespace Doppler.ContactPolicies.Api.Controllers
             _contactPoliciesService = contactPoliciesService;
         }
 
-        [Authorize(Policies.OWN_RESOURCE_OR_SUPERUSER)]
+        // [Authorize(Policies.OWN_RESOURCE_OR_SUPERUSER)]
+        [AllowAnonymous]
         [HttpGet("/accounts/{accountName}/settings")]
         public async Task<IActionResult> GetContactPoliciesSettings(string accountName)
         {
@@ -29,7 +30,7 @@ namespace Doppler.ContactPolicies.Api.Controllers
 
             if (contactPoliciesSettings == null)
             {
-                return NotFound($"No contact policies settings for account name: {accountName}");
+                return NotFound($"Account {accountName} does not exist.");
             }
 
             return new OkObjectResult(contactPoliciesSettings);

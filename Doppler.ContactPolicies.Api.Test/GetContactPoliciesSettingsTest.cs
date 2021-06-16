@@ -42,7 +42,8 @@ namespace Doppler.ContactPolicies.Api.Test
                 SetUpExpectedContactPoliciesSetting(accountName, out var expectedResultAsString, true);
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
-            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsAsync(accountName)).ReturnsAsync(expectedContactPoliciesSetting);
+            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsAsync(accountName))
+                .ReturnsAsync(expectedContactPoliciesSetting);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {
@@ -51,7 +52,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/accounts/{accountName}/settings")
             {
-                Headers = { { "Authorization", $"Bearer {token}" } }
+                Headers = {{"Authorization", $"Bearer {token}"}}
             };
 
             // Act
@@ -84,7 +85,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/accounts/{accountName}/settings")
             {
-                Headers = { { "Authorization", $"Bearer {token}" } }
+                Headers = {{"Authorization", $"Bearer {token}"}}
             };
 
             // Act
@@ -117,7 +118,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/accounts/{accountName}/settings")
             {
-                Headers = { { "Authorization", $"Bearer {token}" } }
+                Headers = {{"Authorization", $"Bearer {token}"}}
             };
 
             // Act
@@ -138,7 +139,6 @@ namespace Doppler.ContactPolicies.Api.Test
             GetContactPoliciesSettings_Should_ReturnOKWithExcludedSubscribersListsAsNull_When_UserWithSameAccountNameIsFoundAndContactPoliciesIsNotEnabled(
                 string accountName, string token, HttpStatusCode expectedStatusCode)
         {
-
             var expectedContactPoliciesDto = new ContactPoliciesSettingsDto()
             {
                 AccountName = accountName,
@@ -162,7 +162,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/accounts/{accountName}/settings")
             {
-                Headers = { { "Authorization", $"Bearer {token}" } }
+                Headers = {{"Authorization", $"Bearer {token}"}}
             };
 
             // Act

@@ -8,7 +8,6 @@ namespace Doppler.ContactPolicies.Data.Access.Entities
 {
     public sealed class ContactPoliciesSettings
     {
-
         public string AccountName { get; set; }
         public int? IdUser { get; set; }
         public bool EnabledExcludedSubscribersList { get; set; }

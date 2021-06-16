@@ -54,7 +54,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
             var request = new HttpRequestMessage(HttpMethod.Get, url)
             {
-                Headers = { { "Authorization", $"Bearer {token}" } }
+                Headers = {{"Authorization", $"Bearer {token}"}}
             };
 
             // Act
@@ -78,7 +78,8 @@ namespace Doppler.ContactPolicies.Api.Test
             var contactPoliciesSettings = fixture.Create<ContactPoliciesSettingsDto>();
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
-            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsAsync(accountName)).ReturnsAsync(contactPoliciesSettings);
+            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsAsync(accountName))
+                .ReturnsAsync(contactPoliciesSettings);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {
@@ -87,7 +88,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
             var request = new HttpRequestMessage(HttpMethod.Get, url)
             {
-                Headers = { { "Authorization", $"Bearer {token}" } }
+                Headers = {{"Authorization", $"Bearer {token}"}}
             };
 
             // Act

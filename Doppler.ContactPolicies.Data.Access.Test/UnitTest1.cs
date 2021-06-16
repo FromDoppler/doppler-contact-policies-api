@@ -8,7 +8,6 @@ namespace Doppler.ContactPolicies.Data.Access.Test
         [Fact]
         public void Test1()
         {
-
         }
     }
 }

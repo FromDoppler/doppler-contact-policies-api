@@ -34,7 +34,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
                 inner join [SubscribersList] sl on sl.IdSubscribersList = sls.IdSubscribersList
                 inner join [User] u on u.IdUser = sl.IdUser where u.Email = @Email;";
 
-            var queryParams = new { Email = accountName };
+            var queryParams = new {Email = accountName};
             var multipleAsync = await connection.QueryMultipleAsync(query, queryParams);
             var contactPoliciesSettings =
                 (await multipleAsync.ReadAsync<Entities.ContactPoliciesSettings>()).FirstOrDefault();

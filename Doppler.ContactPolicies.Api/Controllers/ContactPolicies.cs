@@ -1,12 +1,8 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Doppler.ContactPolicies.Business.Logic.Services;
 using Doppler.ContactPolicies.Api.DopplerSecurity;
+using Doppler.ContactPolicies.Business.Logic.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace Doppler.ContactPolicies.Api.Controllers
 {

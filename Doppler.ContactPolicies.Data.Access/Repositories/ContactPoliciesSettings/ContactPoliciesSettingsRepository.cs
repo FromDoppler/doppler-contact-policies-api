@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Dapper;
 using Doppler.ContactPolicies.Data.Access.Core;
 using Doppler.ContactPolicies.Data.Access.Entities;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettings
 {
@@ -25,9 +21,9 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
         {
             using var connection = await _databaseConnectionFactory.GetConnection();
             const string query =
-                @"select cp.IdUser, cp.Enabled [EnabledExcludedSubscribersList], cp.Active, cp.Interval [IntervalInDays], cp.Amount [EmailsAmountByInterval], u.Email [AccountName]
+                @"select cp.IdUser, cp.Active, cp.Interval [IntervalInDays], cp.Amount [EmailsAmountByInterval], u.Email [AccountName]
                 from [User] u
-                left join [UserShippingLimit] cp on u.IdUser = cp.IdUser
+                left join [UserShippingLimit] cp on u.IdUser = cp.IdUser and cp.Enabled = 1
                 where u.Email = @Email;
                 select sl.IdSubscribersList [Id], sl.Name
                 from [SubscribersListXShippingLimit] sls
@@ -44,11 +40,8 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
             if (contactPoliciesSettings.IdUser == null)
                 return contactPoliciesSettings;
 
-            if (contactPoliciesSettings.EnabledExcludedSubscribersList)
-            {
-                contactPoliciesSettings.ExcludedSubscribersLists =
-                    (await multipleAsync.ReadAsync<ExcludedSubscribersLists>()).ToList();
-            }
+            contactPoliciesSettings.ExcludedSubscribersLists =
+                (await multipleAsync.ReadAsync<ExcludedSubscribersLists>()).ToList();
 
             return contactPoliciesSettings;
         }

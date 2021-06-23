@@ -29,7 +29,7 @@ namespace Doppler.ContactPolicies.Business.Logic.Services
         }
 
         public async Task<bool> InsertContactPoliciesSettings(string accountName,
-           ContactPoliciesSettingsDto contactPoliciesSettingsToUpdate)
+            ContactPoliciesSettingsDto contactPoliciesSettingsToUpdate)
         {
             var contactPoliciesSettingsToUpdateDao = contactPoliciesSettingsToUpdate.ToDao();
 
@@ -66,8 +66,8 @@ namespace Doppler.ContactPolicies.Business.Logic.Services
         private async Task UpdateExcludedSubscribersListAsync(string accountName, UserPermission userFeature, ContactPoliciesSettings contactPoliciesSettingsToUpdate)
         {
             List<ExcludedSubscribersLists> existingExcludedSubscribersListForUser = await _contactPoliciesSettingsRepository.VerifyUserSubscriberListExist(
-               contactPoliciesSettingsToUpdate.IdUser,
-               contactPoliciesSettingsToUpdate.ExcludedSubscribersLists);
+                contactPoliciesSettingsToUpdate.IdUser,
+                contactPoliciesSettingsToUpdate.ExcludedSubscribersLists);
 
             if (existingExcludedSubscribersListForUser is null)
                 throw new Exception($"This action is not allowed for the user with Account {accountName}.");

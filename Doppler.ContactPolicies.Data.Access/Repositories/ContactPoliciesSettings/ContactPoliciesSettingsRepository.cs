@@ -51,7 +51,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
         {
             using var connection = await _databaseConnectionFactory.GetConnection();
             const string query =
-                 @"select IdUser from [User] u where u.Email = @Email;";
+                @"select IdUser from [User] u where u.Email = @Email;";
             var queryParams = new { Email = accountName };
             return await connection.QueryFirstOrDefaultAsync<int?>(query, queryParams);
         }
@@ -110,7 +110,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
             {
 
                 var insertedRows = await connection.ExecuteAsync(
-                    @"INSERT [SubscribersListXShippingLimit] (IdUser, IdSubscribersList, Active) 
+                    @"INSERT [SubscribersListXShippingLimit] (IdUser, IdSubscribersList, Active)
                     values(@IdUser,@IdSubscribersList, @Active)",
                     excludedSubscribersToInsert.Select(id => new
                     { IdUser = IdUser, IdSubscribersList = id, Active = true }));

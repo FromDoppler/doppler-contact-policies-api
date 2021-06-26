@@ -1,4 +1,5 @@
 using Doppler.ContactPolicies.Api.DopplerSecurity;
+using Doppler.ContactPolicies.Business.Logic.DTO;
 using Doppler.ContactPolicies.Business.Logic.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -24,6 +25,22 @@ namespace Doppler.ContactPolicies.Api.Controllers
             var contactPoliciesSettings = await _contactPoliciesService.GetContactPoliciesSettingsAsync(accountName);
 
             if (contactPoliciesSettings == null)
+            {
+                return NotFound($"Account {accountName} does not exist.");
+            }
+
+            return new OkObjectResult(contactPoliciesSettings);
+        }
+
+        [Authorize(Policies.OWN_RESOURCE_OR_SUPERUSER)]
+        [HttpPut("/accounts/{accountName}/settings")]
+        public async Task<IActionResult> UpdateContactPoliciesSettings(string accountName,
+            [FromBody] ContactPoliciesSettingsDto contactPoliciesSettings)
+        {
+            var newContactPoliciesSetting =
+                await _contactPoliciesService.InsertContactPoliciesSettingsAsync(accountName, contactPoliciesSettings);
+
+            if (!newContactPoliciesSetting)
             {
                 return NotFound($"Account {accountName} does not exist.");
             }

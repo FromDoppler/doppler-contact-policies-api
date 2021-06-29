@@ -80,12 +80,12 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
                 var paramIds = contactPoliciesToInsert.ExcludedSubscribersLists.Select(s => s.Id);
 
                 string updateExclusionList = "insert into SubscribersListXShippingLimit(IdUser, IdSubscribersList, Active) " +
-                                             "select sl.IdUser, sl.IdSubscribersList, 1 as Active from SubscribersList sl join [User] u ON u.IdUser = sl.IdUser " +
-                                             "join UserShippingLimit usl on u.IdUser = usl.IdUser " +
-                                             "left join SubscribersListXShippingLimit slxsl on slxsl.IdUser = sl.IdUser and slxsl.IdSubscribersList = sl.IdSubscribersList " +
-                                             "where slxsl.IdSubscribersList IS NULL " +
-                                             "and usl.Enabled = 1 and u.IdUser = @IdUser " +
-                                             "and sl.IdSubscribersList in @IdsExcludedSubscriberList";
+                                            "select sl.IdUser, sl.IdSubscribersList, 1 as Active from SubscribersList sl join [User] u ON u.IdUser = sl.IdUser " +
+                                            "join UserShippingLimit usl on u.IdUser = usl.IdUser " +
+                                            "left join SubscribersListXShippingLimit slxsl on slxsl.IdUser = sl.IdUser and slxsl.IdSubscribersList = sl.IdSubscribersList " +
+                                            "where slxsl.IdSubscribersList IS NULL " +
+                                            "and usl.Enabled = 1 and u.IdUser = @IdUser " +
+                                            "and sl.IdSubscribersList in @IdsExcludedSubscriberList";
 
                 var updated = await connection.ExecuteAsync(updateExclusionList, new
                 {

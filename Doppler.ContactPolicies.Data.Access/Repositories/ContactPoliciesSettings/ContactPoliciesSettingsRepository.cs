@@ -76,10 +76,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
                 @"delete from [SubscribersListXShippingLimit] where IdUser = @IdUser and  IdSubscribersList not in @Ids;",
                 new { IdUser = contactPoliciesToInsert.IdUser, Ids = contactPoliciesToInsert.ExcludedSubscribersLists.Select(x => x.Id) }, transaction: transaction);
 
-
-                var paramIds = contactPoliciesToInsert.ExcludedSubscribersLists.Select(s => s.Id);
-
-                string updateExclusionList = "insert into SubscribersListXShippingLimit(IdUser, IdSubscribersList, Active) " +
+                const string updateExclusionList = "insert into SubscribersListXShippingLimit(IdUser, IdSubscribersList, Active) " +
                                             "select sl.IdUser, sl.IdSubscribersList, 1 as Active from SubscribersList sl join [User] u ON u.IdUser = sl.IdUser " +
                                             "join UserShippingLimit usl on u.IdUser = usl.IdUser " +
                                             "left join SubscribersListXShippingLimit slxsl on slxsl.IdUser = sl.IdUser and slxsl.IdSubscribersList = sl.IdSubscribersList " +
@@ -90,7 +87,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
                 var updated = await connection.ExecuteAsync(updateExclusionList, new
                 {
                     IdUser = contactPoliciesToInsert.IdUser,
-                    IdsExcludedSubscriberList = paramIds
+                    IdsExcludedSubscriberList = contactPoliciesToInsert.ExcludedSubscribersLists.Select(s => s.Id)
                 }, transaction);
 
                 transaction.Commit();

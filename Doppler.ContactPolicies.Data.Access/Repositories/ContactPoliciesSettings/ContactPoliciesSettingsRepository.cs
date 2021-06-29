@@ -36,14 +36,10 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
                 (await multipleAsync.ReadAsync<Entities.ContactPoliciesSettings>()).FirstOrDefault();
 
             if (contactPoliciesSettings == null)
-            {
                 return null;
-            }
 
             if (contactPoliciesSettings.IdUser == null)
-            {
                 return contactPoliciesSettings;
-            }
 
             contactPoliciesSettings.ExcludedSubscribersLists =
                 (await multipleAsync.ReadAsync<ExcludedSubscribersLists>()).ToList();
@@ -61,22 +57,10 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
                 where u.Email = @Email;";
 
             var queryParams = new { Email = accountName };
-            var contactPoliciesSettings = await connection.QueryFirstOrDefaultAsync<Entities.ContactPoliciesSettings>(query, queryParams);
-
-            if (contactPoliciesSettings == null)
-            {
-                return null;
-            }
-
-            if (contactPoliciesSettings.IdUser == null)
-            {
-                return contactPoliciesSettings;
-            }
-
-            return contactPoliciesSettings;
+            return await connection.QueryFirstOrDefaultAsync<Entities.ContactPoliciesSettings>(query, queryParams);
         }
 
-        public async Task<bool> InsertContactPoliciesSettingsAsync(Entities.ContactPoliciesSettings contactPoliciesToInsert)
+        public async Task<bool> UpdateContactPoliciesSettingsAsync(Entities.ContactPoliciesSettings contactPoliciesToInsert)
         {
 
             using var connection = await _databaseConnectionFactory.GetConnection();
@@ -87,26 +71,30 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
                     @"update [UserShippingLimit] set Active = @Active, Interval = @IntervalInDays, Amount = @EmailsAmountByInterval where IdUser = @IdUser;";
 
                 var affectedRows = await connection.ExecuteAsync(updateQuery, contactPoliciesToInsert, transaction: transaction);
+
                 var deletedRows = await connection.ExecuteAsync(
                 @"delete from [SubscribersListXShippingLimit] where IdUser = @IdUser and  IdSubscribersList not in @Ids;",
                 new { IdUser = contactPoliciesToInsert.IdUser, Ids = contactPoliciesToInsert.ExcludedSubscribersLists.Select(x => x.Id) }, transaction: transaction);
 
-                int insertedRows = 0;
-                foreach (var item in contactPoliciesToInsert.ExcludedSubscribersLists)
-                {
 
-                    insertedRows += await connection.ExecuteAsync(
-                                @"if exists (select IdUser,IdSubscribersList from [SubscribersList] where IdUser = @IdUser and IdSubscribersList = @IdSubscribersList)
-                                if not exists (select IdUser,IdSubscribersList from [SubscribersListXShippingLimit] where IdUser = @IdUser and IdSubscribersList = @IdSubscribersList)
-                                insert [SubscribersListXShippingLimit] (IdUser, IdSubscribersList, Active)
-                                values(@IdUser,@IdSubscribersList, @Active)", new
-                                { IdUser = contactPoliciesToInsert.IdUser, IdSubscribersList = item.Id, Active = true }, transaction: transaction);
-                }
+                var paramIds = contactPoliciesToInsert.ExcludedSubscribersLists.Select(s => s.Id);
+
+                string updateExclusionList = "insert into SubscribersListXShippingLimit(IdUser, IdSubscribersList, Active) " +
+                                             "select sl.IdUser, sl.IdSubscribersList, 1 as Active from SubscribersList sl join [User] u ON u.IdUser = sl.IdUser " +
+                                             "join UserShippingLimit usl on u.IdUser = usl.IdUser " +
+                                             "left join SubscribersListXShippingLimit slxsl on slxsl.IdUser = sl.IdUser and slxsl.IdSubscribersList = sl.IdSubscribersList " +
+                                             "where slxsl.IdSubscribersList IS NULL " +
+                                             "and usl.Enabled = 1 and u.IdUser = @IdUser " +
+                                             "and sl.IdSubscribersList in @IdsExcludedSubscriberList";
+
+                var updated = await connection.ExecuteAsync(updateExclusionList, new
+                {
+                    IdUser = contactPoliciesToInsert.IdUser,
+                    IdsExcludedSubscriberList = paramIds
+                }, transaction);
 
                 transaction.Commit();
             }
-
-
             return await Task.FromResult(true);
         }
         #endregion

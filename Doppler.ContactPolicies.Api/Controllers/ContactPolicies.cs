@@ -25,9 +25,7 @@ namespace Doppler.ContactPolicies.Api.Controllers
             var contactPoliciesSettings = await _contactPoliciesService.GetContactPoliciesSettingsAsync(accountName);
 
             if (contactPoliciesSettings == null)
-            {
                 return NotFound($"Account {accountName} does not exist.");
-            }
 
             return new OkObjectResult(contactPoliciesSettings);
         }
@@ -38,12 +36,10 @@ namespace Doppler.ContactPolicies.Api.Controllers
             [FromBody] ContactPoliciesSettingsDto contactPoliciesSettings)
         {
             var newContactPoliciesSetting =
-                await _contactPoliciesService.InsertContactPoliciesSettingsAsync(accountName, contactPoliciesSettings);
+                await _contactPoliciesService.UpdateContactPoliciesSettingsAsync(accountName, contactPoliciesSettings);
 
             if (!newContactPoliciesSetting)
-            {
                 return NotFound($"Account {accountName} does not exist.");
-            }
 
             return new OkObjectResult(contactPoliciesSettings);
         }

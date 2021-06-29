@@ -23,30 +23,30 @@ namespace Doppler.ContactPolicies.Business.Logic.Services
             return contactPoliciesSettings;
         }
 
-        public async Task<bool> InsertContactPoliciesSettingsAsync(string accountName, ContactPoliciesSettingsDto contactPoliciesSettings)
+        public async Task<bool> UpdateContactPoliciesSettingsAsync(string accountName, ContactPoliciesSettingsDto contactPoliciesSettings)
         {
-            var existingUsercontactPolicies = await _contactPoliciesSettingsRepository.GetBasicContactPoliciesSettingsAsync(accountName);
+            var existingUserContactPolicies = await _contactPoliciesSettingsRepository.GetBasicContactPoliciesSettingsAsync(accountName);
 
-            /// User doesnt exist
-            if (existingUsercontactPolicies is null)
+            // User doesnt exist
+            if (existingUserContactPolicies is null)
                 return false;
 
-            /// User doesnt have permissions
-            if (existingUsercontactPolicies.IdUser is null)
+            // User doesnt have permissions
+            if (existingUserContactPolicies.IdUser is null)
                 throw new Exception($"This action is not allowed for the user with Account {accountName}.");
 
-            var contactPoliciesToInsert = CreateUserContactPoliciesToInsert(contactPoliciesSettings, existingUsercontactPolicies);
-            var isSuccsesfulyInserted = await _contactPoliciesSettingsRepository.InsertContactPoliciesSettingsAsync(contactPoliciesToInsert);
+            var contactPoliciesToInsert = CreateUserContactPoliciesToUpdate(contactPoliciesSettings, existingUserContactPolicies);
+            var isSuccessfullyInserted = await _contactPoliciesSettingsRepository.UpdateContactPoliciesSettingsAsync(contactPoliciesToInsert);
 
-            return isSuccsesfulyInserted;
+            return isSuccessfullyInserted;
         }
 
-        private ContactPoliciesSettings CreateUserContactPoliciesToInsert(ContactPoliciesSettingsDto contactPoliciesSettings, ContactPoliciesSettings existingUsercontactPolicies)
+        private ContactPoliciesSettings CreateUserContactPoliciesToUpdate(ContactPoliciesSettingsDto contactPoliciesSettings, ContactPoliciesSettings existingUserContactPolicies)
         {
             return new ContactPoliciesSettings
             {
-                AccountName = existingUsercontactPolicies.AccountName,
-                IdUser = existingUsercontactPolicies.IdUser,
+                AccountName = existingUserContactPolicies.AccountName,
+                IdUser = existingUserContactPolicies.IdUser,
                 Active = contactPoliciesSettings.Active,
                 EmailsAmountByInterval = contactPoliciesSettings.EmailsAmountByInterval,
                 IntervalInDays = contactPoliciesSettings.IntervalInDays,

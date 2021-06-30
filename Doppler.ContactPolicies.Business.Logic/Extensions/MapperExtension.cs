@@ -1,6 +1,7 @@
 using Doppler.ContactPolicies.Business.Logic.DTO;
 using Doppler.ContactPolicies.Data.Access.Entities;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Doppler.ContactPolicies.Business.Logic.Extensions
 {
@@ -17,9 +18,7 @@ namespace Doppler.ContactPolicies.Business.Logic.Extensions
                 Active = contactPoliciesSettings.Active,
                 EmailsAmountByInterval = contactPoliciesSettings.EmailsAmountByInterval,
                 IntervalInDays = contactPoliciesSettings.IntervalInDays,
-                ExcludedSubscribersLists = contactPoliciesSettings.ExcludedSubscribersLists is null
-                    ? null
-                    : new List<ExcludedSubscribersLists>(contactPoliciesSettings.ExcludedSubscribersLists)
+                ExcludedSubscribersLists = contactPoliciesSettings.ExcludedSubscribersLists?.ToList()
             };
         }
 
@@ -34,7 +33,7 @@ namespace Doppler.ContactPolicies.Business.Logic.Extensions
                 EmailsAmountByInterval = contactPoliciesSettings.EmailsAmountByInterval,
                 IntervalInDays = contactPoliciesSettings.IntervalInDays,
                 ExcludedSubscribersLists = contactPoliciesSettings.ExcludedSubscribersLists is null
-                    ? null
+                    ? new List<ExcludedSubscribersLists>()
                     : new List<ExcludedSubscribersLists>(contactPoliciesSettings.ExcludedSubscribersLists)
             };
         }

@@ -11,9 +11,25 @@ namespace Doppler.ContactPolicies.Business.Logic.Extensions
         {
             if (contactPoliciesSettings is null)
                 return null;
-            return new()
+            return new ContactPoliciesSettingsDto
             {
                 AccountName = contactPoliciesSettings.AccountName,
+                Active = contactPoliciesSettings.Active,
+                EmailsAmountByInterval = contactPoliciesSettings.EmailsAmountByInterval,
+                IntervalInDays = contactPoliciesSettings.IntervalInDays,
+                ExcludedSubscribersLists = contactPoliciesSettings.ExcludedSubscribersLists is null
+                    ? null
+                    : new List<ExcludedSubscribersLists>(contactPoliciesSettings.ExcludedSubscribersLists)
+            };
+        }
+
+        public static ContactPoliciesSettings ToDao(
+            this ContactPoliciesSettingsDto contactPoliciesSettings)
+        {
+            if (contactPoliciesSettings is null)
+                return null;
+            return new ContactPoliciesSettings
+            {
                 Active = contactPoliciesSettings.Active,
                 EmailsAmountByInterval = contactPoliciesSettings.EmailsAmountByInterval,
                 IntervalInDays = contactPoliciesSettings.IntervalInDays,

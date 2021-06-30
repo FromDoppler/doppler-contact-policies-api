@@ -6,6 +6,6 @@ namespace Doppler.ContactPolicies.Business.Logic.Services
     public interface IContactPoliciesService
     {
         Task<ContactPoliciesSettingsDto> GetContactPoliciesSettingsAsync(string accountName);
-        Task<bool> UpdateContactPoliciesSettingsAsync(string accountName, ContactPoliciesSettingsDto contactPoliciesSettings);
+        Task UpdateContactPoliciesSettingsAsync(string accountName, ContactPoliciesSettingsDto contactPoliciesSettings);
     }
 }

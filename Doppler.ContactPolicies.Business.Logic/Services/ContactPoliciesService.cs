@@ -1,8 +1,6 @@
 using Doppler.ContactPolicies.Business.Logic.DTO;
 using Doppler.ContactPolicies.Business.Logic.Extensions;
-using Doppler.ContactPolicies.Data.Access.Entities;
 using Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettings;
-using System;
 using System.Threading.Tasks;
 
 namespace Doppler.ContactPolicies.Business.Logic.Services
@@ -23,35 +21,10 @@ namespace Doppler.ContactPolicies.Business.Logic.Services
             return contactPoliciesSettings;
         }
 
-        public async Task<bool> UpdateContactPoliciesSettingsAsync(string accountName, ContactPoliciesSettingsDto contactPoliciesSettings)
+        public async Task UpdateContactPoliciesSettingsAsync(string accountName, ContactPoliciesSettingsDto contactPoliciesSettings)
         {
-            var existingUserContactPolicies = await _contactPoliciesSettingsRepository.GetBasicContactPoliciesSettingsAsync(accountName);
-
-            // User doesnt exist
-            if (existingUserContactPolicies is null)
-                return false;
-
-            // User doesnt have permissions
-            if (existingUserContactPolicies.IdUser is null)
-                throw new Exception($"This action is not allowed for the user with Account {accountName}.");
-
-            var contactPoliciesToInsert = CreateUserContactPoliciesToUpdate(contactPoliciesSettings, existingUserContactPolicies);
-            var isSuccessfullyInserted = await _contactPoliciesSettingsRepository.UpdateContactPoliciesSettingsAsync(contactPoliciesToInsert);
-
-            return isSuccessfullyInserted;
-        }
-
-        private ContactPoliciesSettings CreateUserContactPoliciesToUpdate(ContactPoliciesSettingsDto contactPoliciesSettings, ContactPoliciesSettings existingUserContactPolicies)
-        {
-            return new ContactPoliciesSettings
-            {
-                AccountName = existingUserContactPolicies.AccountName,
-                IdUser = existingUserContactPolicies.IdUser,
-                Active = contactPoliciesSettings.Active,
-                EmailsAmountByInterval = contactPoliciesSettings.EmailsAmountByInterval,
-                IntervalInDays = contactPoliciesSettings.IntervalInDays,
-                ExcludedSubscribersLists = contactPoliciesSettings.ExcludedSubscribersLists
-            };
+            var contactPoliciesToUpdate = contactPoliciesSettings.ToDao();
+            await _contactPoliciesSettingsRepository.UpdateContactPoliciesSettingsAsync(accountName, contactPoliciesToUpdate);
         }
     }
 }

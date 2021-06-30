@@ -22,6 +22,7 @@ namespace Doppler.ContactPolicies.Api.Controllers
         [HttpGet("/accounts/{accountName}/settings")]
         public async Task<IActionResult> GetContactPoliciesSettings(string accountName)
         {
+            // TODO: replace this validation to get UserId by accountName 
             var contactPoliciesSettings = await _contactPoliciesService.GetContactPoliciesSettingsAsync(accountName);
 
             if (contactPoliciesSettings == null)
@@ -33,15 +34,15 @@ namespace Doppler.ContactPolicies.Api.Controllers
         [Authorize(Policies.OWN_RESOURCE_OR_SUPERUSER)]
         [HttpPut("/accounts/{accountName}/settings")]
         public async Task<IActionResult> UpdateContactPoliciesSettings(string accountName,
-            [FromBody] ContactPoliciesSettingsDto contactPoliciesSettings)
+                    [FromBody] ContactPoliciesSettingsDto contactPoliciesSettings)
         {
-            var newContactPoliciesSetting =
-                await _contactPoliciesService.UpdateContactPoliciesSettingsAsync(accountName, contactPoliciesSettings);
-
-            if (!newContactPoliciesSetting)
+            // TODO: replace this validation to get UserId by accountName 
+            var currentContactPoliciesSetting = await _contactPoliciesService.GetContactPoliciesSettingsAsync(accountName);
+            if (currentContactPoliciesSetting == null)
                 return NotFound($"Account {accountName} does not exist.");
 
-            return new OkObjectResult(contactPoliciesSettings);
+            await _contactPoliciesService.UpdateContactPoliciesSettingsAsync(accountName, contactPoliciesSettings);
+            return Ok();
         }
     }
 }

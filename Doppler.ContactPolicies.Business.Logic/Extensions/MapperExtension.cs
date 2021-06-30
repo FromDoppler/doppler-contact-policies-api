@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 using Doppler.ContactPolicies.Business.Logic.DTO;
 using Doppler.ContactPolicies.Data.Access.Entities;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Doppler.ContactPolicies.Business.Logic.Extensions
 {
@@ -16,14 +12,28 @@ namespace Doppler.ContactPolicies.Business.Logic.Extensions
         {
             if (contactPoliciesSettings is null)
                 return null;
-            return new()
+            return new ContactPoliciesSettingsDto
             {
                 AccountName = contactPoliciesSettings.AccountName,
                 Active = contactPoliciesSettings.Active,
                 EmailsAmountByInterval = contactPoliciesSettings.EmailsAmountByInterval,
                 IntervalInDays = contactPoliciesSettings.IntervalInDays,
+                ExcludedSubscribersLists = contactPoliciesSettings.ExcludedSubscribersLists?.ToList()
+            };
+        }
+
+        public static ContactPoliciesSettings ToDao(
+            this ContactPoliciesSettingsDto contactPoliciesSettings)
+        {
+            if (contactPoliciesSettings is null)
+                return null;
+            return new ContactPoliciesSettings
+            {
+                Active = contactPoliciesSettings.Active,
+                EmailsAmountByInterval = contactPoliciesSettings.EmailsAmountByInterval,
+                IntervalInDays = contactPoliciesSettings.IntervalInDays,
                 ExcludedSubscribersLists = contactPoliciesSettings.ExcludedSubscribersLists is null
-                    ? null
+                    ? new List<ExcludedSubscribersLists>()
                     : new List<ExcludedSubscribersLists>(contactPoliciesSettings.ExcludedSubscribersLists)
             };
         }

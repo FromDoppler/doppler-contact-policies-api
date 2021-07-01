@@ -1,19 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using AutoFixture;
-using Doppler.ContactPolicies.Api;
 using Doppler.ContactPolicies.Business.Logic.DTO;
 using Doppler.ContactPolicies.Business.Logic.Services;
-using Doppler.ContactPolicies.Data.Access.Entities;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Doppler.ContactPolicies.Api.Test
@@ -78,6 +72,7 @@ namespace Doppler.ContactPolicies.Api.Test
             var contactPoliciesSettings = fixture.Create<ContactPoliciesSettingsDto>();
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
+            contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(It.IsAny<int>());
             contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsAsync(accountName)).ReturnsAsync(contactPoliciesSettings);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>

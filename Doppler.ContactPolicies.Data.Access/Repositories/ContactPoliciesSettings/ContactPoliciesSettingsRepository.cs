@@ -90,6 +90,16 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
 
             transaction.Commit();
         }
+
+        public async Task<int?> GetUserIdByAccountName(string accountName)
+        {
+            using var connection = await _databaseConnectionFactory.GetConnection();
+            const string query =
+                @"select IdUser from [User] u where u.Email = @Email";
+            var queryParams = new { Email = accountName };
+            return await connection.QueryFirstOrDefaultAsync<int?>(query, queryParams);
+        }
+
         #endregion
     }
 }

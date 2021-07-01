@@ -26,5 +26,10 @@ namespace Doppler.ContactPolicies.Business.Logic.Services
             var contactPoliciesToUpdate = contactPoliciesSettings.ToDao();
             await _contactPoliciesSettingsRepository.UpdateContactPoliciesSettingsAsync(accountName, contactPoliciesToUpdate);
         }
+
+        public async Task<int?> GetIdUserByAccountName(string accountName)
+        {
+            return await _contactPoliciesSettingsRepository.GetUserIdByAccountName(accountName);
+        }
     }
 }

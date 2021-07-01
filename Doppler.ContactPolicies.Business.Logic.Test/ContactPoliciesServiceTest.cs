@@ -1,10 +1,9 @@
-using System;
-using System.Threading.Tasks;
 using AutoFixture;
 using Doppler.ContactPolicies.Business.Logic.Services;
 using Doppler.ContactPolicies.Data.Access.Entities;
 using Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettings;
 using Moq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Doppler.ContactPolicies.Business.Logic.Test
@@ -25,13 +24,13 @@ namespace Doppler.ContactPolicies.Business.Logic.Test
                 .Create();
 
             var contactPoliciesRepositoryMock = new Mock<IContactPoliciesSettingsRepository>();
-            contactPoliciesRepositoryMock.Setup(x => x.GetContactPoliciesSettingsAsync(accountName))
+            contactPoliciesRepositoryMock.Setup(x => x.GetContactPoliciesSettingsAsync(It.IsAny<int>()))
                 .ReturnsAsync(expected).Verifiable();
 
             var contactPoliciesSut = new ContactPoliciesService(contactPoliciesRepositoryMock.Object);
 
             // Act
-            var actual = await contactPoliciesSut.GetContactPoliciesSettingsAsync(accountName);
+            var actual = await contactPoliciesSut.GetContactPoliciesSettingsAsync(It.IsAny<int>());
 
             // Assert
             contactPoliciesRepositoryMock.Verify();

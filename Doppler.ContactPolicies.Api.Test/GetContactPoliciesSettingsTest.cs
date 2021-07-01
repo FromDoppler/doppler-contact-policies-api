@@ -39,7 +39,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
             contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(It.IsAny<int>());
-            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsAsync(accountName)).ReturnsAsync(expectedContactPoliciesSetting);
+            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsAsync(It.IsAny<int>())).ReturnsAsync(expectedContactPoliciesSetting);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {
@@ -74,7 +74,6 @@ namespace Doppler.ContactPolicies.Api.Test
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
             contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(expectedNotFoundedUserId);
-            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsAsync(accountName)).ReturnsAsync(expected);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {
@@ -107,7 +106,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
             contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(It.IsAny<int>());
-            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsAsync(accountName))
+            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsAsync(It.IsAny<int>()))
                 .ReturnsAsync(expectedContactPoliciesSetting);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
@@ -152,7 +151,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
             var contactPoliciesServiceMock = new Mock<IContactPoliciesService>();
             contactPoliciesServiceMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(It.IsAny<int>());
-            contactPoliciesServiceMock.Setup(x => x.GetContactPoliciesSettingsAsync(accountName))
+            contactPoliciesServiceMock.Setup(x => x.GetContactPoliciesSettingsAsync(It.IsAny<int>()))
                 .ReturnsAsync(expectedContactPoliciesDto).Verifiable();
 
 

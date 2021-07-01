@@ -91,7 +91,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
             transaction.Commit();
         }
 
-        public async Task<int?> GetUserIdByAccountName(string accountName)
+        public async Task<int?> GetIdUserByAccountName(string accountName)
         {
             using var connection = await _databaseConnectionFactory.GetConnection();
             const string query =

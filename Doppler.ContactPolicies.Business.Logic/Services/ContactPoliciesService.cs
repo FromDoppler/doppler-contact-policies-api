@@ -29,7 +29,7 @@ namespace Doppler.ContactPolicies.Business.Logic.Services
 
         public async Task<int?> GetIdUserByAccountName(string accountName)
         {
-            return await _contactPoliciesSettingsRepository.GetUserIdByAccountName(accountName);
+            return await _contactPoliciesSettingsRepository.GetIdUserByAccountName(accountName);
         }
     }
 }

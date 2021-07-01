@@ -22,8 +22,8 @@ namespace Doppler.ContactPolicies.Api.Controllers
         [HttpGet("/accounts/{accountName}/settings")]
         public async Task<IActionResult> GetContactPoliciesSettings(string accountName)
         {
-            var userFounded = await _contactPoliciesService.GetIdUserByAccountName(accountName);
-            if (userFounded == null)
+            var idUser = await _contactPoliciesService.GetIdUserByAccountName(accountName);
+            if (idUser == null)
                 return NotFound($"Account {accountName} does not exist.");
 
             var contactPoliciesSettings = await _contactPoliciesService.GetContactPoliciesSettingsAsync(accountName);
@@ -36,8 +36,8 @@ namespace Doppler.ContactPolicies.Api.Controllers
         public async Task<IActionResult> UpdateContactPoliciesSettings(string accountName,
                     [FromBody] ContactPoliciesSettingsDto contactPoliciesSettings)
         {
-            var userFounded = await _contactPoliciesService.GetIdUserByAccountName(accountName);
-            if (userFounded == null)
+            var idUser = await _contactPoliciesService.GetIdUserByAccountName(accountName);
+            if (idUser == null)
                 return NotFound($"Account {accountName} does not exist.");
 
             await _contactPoliciesService.UpdateContactPoliciesSettingsAsync(accountName, contactPoliciesSettings);

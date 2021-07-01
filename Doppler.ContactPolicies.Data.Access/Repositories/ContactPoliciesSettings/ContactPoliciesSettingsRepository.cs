@@ -22,7 +22,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
         {
             using var connection = await _databaseConnectionFactory.GetConnection();
             const string query =
-                @"select uslIdUser, usl.Active, usl.Interval [IntervalInDays], usl.Amount [EmailsAmountByInterval], u.Email [AccountName]
+                @"select convert(bit, (case when usl.IdUser is null then 0 else 1 end)) as UserHasContactPolicies, usl.Active, usl.Interval [IntervalInDays], usl.Amount [EmailsAmountByInterval], u.Email [AccountName]
                 from [User] u
                 left join [UserShippingLimit] usl on u.IdUser = usl.IdUser and usl.Enabled = 1
                 where u.IdUser = @IdUser;
@@ -34,9 +34,9 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
             var queryParams = new { IdUser = idUser };
             var multipleAsync = await connection.QueryMultipleAsync(query, queryParams);
             var contactPoliciesSettings =
-                (await multipleAsync.ReadAsync<Entities.ContactPoliciesSettings>()).FirstOrDefault();
+                (await multipleAsync.ReadAsync<Entities.ContactPoliciesSettings>()).First();
 
-            if (contactPoliciesSettings.IdUser == null)
+            if (!contactPoliciesSettings.UserHasContactPolicies)
                 return contactPoliciesSettings;
 
             contactPoliciesSettings.ExcludedSubscribersLists =

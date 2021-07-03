@@ -43,7 +43,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
             contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(expectedNotFoundedIdUser);
-            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsAsync(It.IsAny<int>())).ReturnsAsync(expectedContactPoliciesSetting);
+            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(It.IsAny<int>())).ReturnsAsync(expectedContactPoliciesSetting);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {
@@ -112,7 +112,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
             contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(expectedNotFoundedIdUser);
-            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsAsync(expectedNotFoundedIdUser))
+            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(expectedNotFoundedIdUser))
                 .ReturnsAsync(expectedContactPoliciesSetting);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
@@ -158,7 +158,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
             var contactPoliciesServiceMock = new Mock<IContactPoliciesService>();
             contactPoliciesServiceMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(expectedNotFoundedIdUser);
-            contactPoliciesServiceMock.Setup(x => x.GetContactPoliciesSettingsAsync(expectedNotFoundedIdUser))
+            contactPoliciesServiceMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(expectedNotFoundedIdUser))
                 .ReturnsAsync(expectedContactPoliciesDto).Verifiable();
 
 

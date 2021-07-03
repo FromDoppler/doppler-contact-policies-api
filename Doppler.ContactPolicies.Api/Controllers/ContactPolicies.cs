@@ -26,7 +26,7 @@ namespace Doppler.ContactPolicies.Api.Controllers
             if (idUser == null)
                 return NotFound($"Account {accountName} does not exist.");
 
-            var contactPoliciesSettings = await _contactPoliciesService.GetContactPoliciesSettingsAsync(idUser.Value);
+            var contactPoliciesSettings = await _contactPoliciesService.GetContactPoliciesSettingsByIdUserAsync(idUser.Value);
 
             return new OkObjectResult(contactPoliciesSettings);
         }

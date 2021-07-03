@@ -18,7 +18,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
 
         #region public methods
 
-        public async Task<Entities.ContactPoliciesSettings> GetContactPoliciesSettingsAsync(int idUser)
+        public async Task<Entities.ContactPoliciesSettings> GetContactPoliciesSettingsByIdUserAsync(int idUser)
         {
             using var connection = await _databaseConnectionFactory.GetConnection();
             const string query =

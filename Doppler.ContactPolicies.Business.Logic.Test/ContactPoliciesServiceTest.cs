@@ -24,13 +24,13 @@ namespace Doppler.ContactPolicies.Business.Logic.Test
                 .Create();
 
             var contactPoliciesRepositoryMock = new Mock<IContactPoliciesSettingsRepository>();
-            contactPoliciesRepositoryMock.Setup(x => x.GetContactPoliciesSettingsAsync(It.IsAny<int>()))
+            contactPoliciesRepositoryMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(It.IsAny<int>()))
                 .ReturnsAsync(expected).Verifiable();
 
             var contactPoliciesSut = new ContactPoliciesService(contactPoliciesRepositoryMock.Object);
 
             // Act
-            var actual = await contactPoliciesSut.GetContactPoliciesSettingsAsync(It.IsAny<int>());
+            var actual = await contactPoliciesSut.GetContactPoliciesSettingsByIdUserAsync(It.IsAny<int>());
 
             // Assert
             contactPoliciesRepositoryMock.Verify();

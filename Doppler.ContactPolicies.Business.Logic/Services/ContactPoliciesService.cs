@@ -14,10 +14,10 @@ namespace Doppler.ContactPolicies.Business.Logic.Services
             _contactPoliciesSettingsRepository = contactPoliciesSettingsRepository;
         }
 
-        public async Task<ContactPoliciesSettingsDto> GetContactPoliciesSettingsAsync(int idUser)
+        public async Task<ContactPoliciesSettingsDto> GetContactPoliciesSettingsByIdUserAsync(int idUser)
         {
             var contactPoliciesSettings =
-                (await _contactPoliciesSettingsRepository.GetContactPoliciesSettingsAsync(idUser)).ToDto();
+                (await _contactPoliciesSettingsRepository.GetContactPoliciesSettingsByIdUserAsync(idUser)).ToDto();
             return contactPoliciesSettings;
         }
 

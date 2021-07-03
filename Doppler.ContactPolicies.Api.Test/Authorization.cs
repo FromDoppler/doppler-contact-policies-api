@@ -73,7 +73,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
             contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(It.IsAny<int>());
-            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsAsync(It.IsAny<int>())).ReturnsAsync(contactPoliciesSettings);
+            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(It.IsAny<int>())).ReturnsAsync(contactPoliciesSettings);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {

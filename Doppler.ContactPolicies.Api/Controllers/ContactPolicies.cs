@@ -34,7 +34,7 @@ namespace Doppler.ContactPolicies.Api.Controllers
         [Authorize(Policies.OWN_RESOURCE_OR_SUPERUSER)]
         [HttpPut("/accounts/{accountName}/settings")]
         public async Task<IActionResult> UpdateContactPoliciesSettings(string accountName,
-                            [FromBody] ContactPoliciesSettingsDto contactPoliciesSettings)
+                                    [FromBody] ContactPoliciesSettingsDto contactPoliciesSettings)
         {
             var idUser = await _contactPoliciesService.GetIdUserByAccountName(accountName);
             if (idUser == null)

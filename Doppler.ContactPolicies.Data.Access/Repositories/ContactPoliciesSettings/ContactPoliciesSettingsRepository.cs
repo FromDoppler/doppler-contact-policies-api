@@ -54,7 +54,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
             const string updateQuery =
                 @"update [UserShippingLimit] set Active = @Active, Interval = @IntervalInDays, Amount = @EmailsAmountByInterval
                 from [UserShippingLimit] usl
-                inner join [User] u on u.IdUser = usl.IdUser where u.IdUser = @IdUser and usl.Enabled = 1;";
+                where usl.IdUser = @IdUser and usl.Enabled = 1;";
 
             var affectedRows = await connection.ExecuteAsync(updateQuery, new
             {
@@ -68,15 +68,15 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
                 throw new Exception($"This action is not allowed for this user.");
 
             await connection.ExecuteAsync(
-                @"delete [SubscribersListXShippingLimit] from [SubscribersListXShippingLimit] slxsl inner join [User] u on u.IdUser = slxsl.IdUser where u.IdUser = @IdUser and  IdSubscribersList not in @Ids;",
+                @"delete [SubscribersListXShippingLimit] from [SubscribersListXShippingLimit] slxsl where slxsl.IdUser = @IdUser and  IdSubscribersList not in @Ids;",
                 new { IdUser = idUser, Ids = contactPoliciesToInsert.ExcludedSubscribersLists.Select(x => x.Id) }, transaction);
 
             const string updateExclusionList = "insert into SubscribersListXShippingLimit(IdUser, IdSubscribersList, Active) " +
-                                                "select sl.IdUser, sl.IdSubscribersList, 1 as Active from SubscribersList sl inner join [User] u on u.IdUser = sl.IdUser " +
-                                                "inner join UserShippingLimit usl on u.IdUser = usl.IdUser " +
+                                                "select sl.IdUser, sl.IdSubscribersList, 1 as Active from SubscribersList sl " +
+                                                "inner join UserShippingLimit usl on sl.IdUser = usl.IdUser " +
                                                 "left join SubscribersListXShippingLimit slxsl on slxsl.IdUser = sl.IdUser and slxsl.IdSubscribersList = sl.IdSubscribersList " +
                                                 "where slxsl.IdSubscribersList IS NULL " +
-                                                "and u.IdUser = @IdUser " +
+                                                "and sl.IdUser = @IdUser " +
                                                 "and sl.IdSubscribersList in @IdsExcludedSubscriberList";
 
             await connection.ExecuteAsync(updateExclusionList, new

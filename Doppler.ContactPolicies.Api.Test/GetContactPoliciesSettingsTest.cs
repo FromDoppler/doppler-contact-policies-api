@@ -9,6 +9,7 @@ using Moq;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -43,7 +44,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
             contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(expectedNotFoundedIdUser);
-            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(It.IsAny<int>())).ReturnsAsync(expectedContactPoliciesSetting);
+            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(expectedNotFoundedIdUser)).ReturnsAsync(expectedContactPoliciesSetting);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {
@@ -135,7 +136,6 @@ namespace Doppler.ContactPolicies.Api.Test
             Assert.Contains(expectedResultAsString, contentAsString);
         }
 
-
         [Theory]
         [InlineData("test1@test.com", TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518,
             HttpStatusCode.OK)]
@@ -205,7 +205,7 @@ namespace Doppler.ContactPolicies.Api.Test
                 }
             };
             expectedResultAsString =
-                $"accountName\":\"test1@test.com\",\"active\":{isActive.ToString().ToLower()},\"emailsAmountByInterval\":100,\"intervalInDays\":10,\"excludedSubscribersLists\":[{{\"id\":34,\"name\":\"Listado_Marketing\"}},{{\"id\":169,\"name\":\"Testing_ExcludeList\"}}]}}";
+                $"{{\"accountName\":\"test1@test.com\",\"active\":{isActive.ToString().ToLower()},\"emailsAmountByInterval\":100,\"intervalInDays\":10,\"excludedSubscribersLists\":[{{\"id\":34,\"name\":\"Listado_Marketing\"}},{{\"id\":169,\"name\":\"Testing_ExcludeList\"}}]}}";
             return expectedContactPoliciesSetting;
         }
     }

@@ -4,8 +4,8 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
 {
     public interface IContactPoliciesSettingsRepository
     {
-        Task<Entities.ContactPoliciesSettings> GetContactPoliciesSettingsAsync(string accountName);
-        Task UpdateContactPoliciesSettingsAsync(string accountName, Entities.ContactPoliciesSettings contactPoliciesToInsert);
+        Task<Entities.ContactPoliciesSettings> GetContactPoliciesSettingsByIdUserAsync(int idUser);
+        Task UpdateContactPoliciesSettingsAsync(int idUser, Entities.ContactPoliciesSettings contactPoliciesToInsert);
         Task<int?> GetIdUserByAccountName(string accountName);
     }
 }

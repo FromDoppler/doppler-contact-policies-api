@@ -18,28 +18,25 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
 
         #region public methods
 
-        public async Task<Entities.ContactPoliciesSettings> GetContactPoliciesSettingsAsync(string accountName)
+        public async Task<Entities.ContactPoliciesSettings> GetContactPoliciesSettingsByIdUserAsync(int idUser)
         {
             using var connection = await _databaseConnectionFactory.GetConnection();
             const string query =
-                @"select usl.IdUser, usl.Active, usl.Interval [IntervalInDays], usl.Amount [EmailsAmountByInterval], u.Email [AccountName]
+                @"select convert(bit, (case when usl.IdUser is null then 0 else 1 end)) as UserHasContactPolicies, usl.Active, usl.Interval [IntervalInDays], usl.Amount [EmailsAmountByInterval], u.Email [AccountName]
                 from [User] u
                 left join [UserShippingLimit] usl on u.IdUser = usl.IdUser and usl.Enabled = 1
-                where u.Email = @Email;
+                where u.IdUser = @IdUser;
                 select sl.IdSubscribersList [Id], sl.Name
                 from [SubscribersListXShippingLimit] sls
                 inner join [SubscribersList] sl on sl.IdSubscribersList = sls.IdSubscribersList
-                inner join [User] u on u.IdUser = sl.IdUser where u.Email = @Email;";
+                inner join [User] u on u.IdUser = sl.IdUser where u.IdUser = @IdUser;";
 
-            var queryParams = new { Email = accountName };
+            var queryParams = new { IdUser = idUser };
             var multipleAsync = await connection.QueryMultipleAsync(query, queryParams);
             var contactPoliciesSettings =
-                (await multipleAsync.ReadAsync<Entities.ContactPoliciesSettings>()).FirstOrDefault();
+                (await multipleAsync.ReadAsync<Entities.ContactPoliciesSettings>()).First();
 
-            if (contactPoliciesSettings == null)
-                return null;
-
-            if (contactPoliciesSettings.IdUser == null)
+            if (!contactPoliciesSettings.UserHasContactPolicies)
                 return contactPoliciesSettings;
 
             contactPoliciesSettings.ExcludedSubscribersLists =
@@ -48,7 +45,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
             return contactPoliciesSettings;
         }
 
-        public async Task UpdateContactPoliciesSettingsAsync(string accountName, Entities.ContactPoliciesSettings contactPoliciesToInsert)
+        public async Task UpdateContactPoliciesSettingsAsync(int idUser, Entities.ContactPoliciesSettings contactPoliciesToInsert)
         {
 
             using var connection = await _databaseConnectionFactory.GetConnection();
@@ -57,34 +54,34 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
             const string updateQuery =
                 @"update [UserShippingLimit] set Active = @Active, Interval = @IntervalInDays, Amount = @EmailsAmountByInterval
                 from [UserShippingLimit] usl
-                inner join [User] u on u.IdUser = usl.IdUser where u.Email = @Email and usl.Enabled = 1;";
+                where usl.IdUser = @IdUser and usl.Enabled = 1;";
 
             var affectedRows = await connection.ExecuteAsync(updateQuery, new
             {
-                Email = accountName,
+                IdUser = idUser,
                 contactPoliciesToInsert.IntervalInDays,
                 contactPoliciesToInsert.EmailsAmountByInterval,
                 contactPoliciesToInsert.Active
             }, transaction);
 
             if (affectedRows == 0)
-                throw new Exception($"This action is not allowed for the user with Account {accountName}.");
+                throw new Exception($"This action is not allowed for this user.");
 
             await connection.ExecuteAsync(
-                @"delete [SubscribersListXShippingLimit] from [SubscribersListXShippingLimit] slxsl inner join [User] u on u.IdUser = slxsl.IdUser where u.Email = @Email and  IdSubscribersList not in @Ids;",
-                new { Email = accountName, Ids = contactPoliciesToInsert.ExcludedSubscribersLists.Select(x => x.Id) }, transaction);
+                @"delete [SubscribersListXShippingLimit] from [SubscribersListXShippingLimit] slxsl where slxsl.IdUser = @IdUser and  IdSubscribersList not in @Ids;",
+                new { IdUser = idUser, Ids = contactPoliciesToInsert.ExcludedSubscribersLists.Select(x => x.Id) }, transaction);
 
             const string updateExclusionList = "insert into SubscribersListXShippingLimit(IdUser, IdSubscribersList, Active) " +
-                                                "select sl.IdUser, sl.IdSubscribersList, 1 as Active from SubscribersList sl inner join [User] u on u.IdUser = sl.IdUser " +
-                                                "inner join UserShippingLimit usl on u.IdUser = usl.IdUser " +
+                                                "select sl.IdUser, sl.IdSubscribersList, 1 as Active from SubscribersList sl " +
+                                                "inner join UserShippingLimit usl on sl.IdUser = usl.IdUser " +
                                                 "left join SubscribersListXShippingLimit slxsl on slxsl.IdUser = sl.IdUser and slxsl.IdSubscribersList = sl.IdSubscribersList " +
                                                 "where slxsl.IdSubscribersList IS NULL " +
-                                                "and u.Email = @Email " +
+                                                "and sl.IdUser = @IdUser " +
                                                 "and sl.IdSubscribersList in @IdsExcludedSubscriberList";
 
             await connection.ExecuteAsync(updateExclusionList, new
             {
-                Email = accountName,
+                IdUser = idUser,
                 IdsExcludedSubscriberList = contactPoliciesToInsert.ExcludedSubscribersLists.Select(s => s.Id)
             }, transaction);
 

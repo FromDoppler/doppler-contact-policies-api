@@ -36,14 +36,14 @@ namespace Doppler.ContactPolicies.Api.Test
         {
             // Arrange
             var fixture = new Fixture();
-            var expectedNotFoundedIdUser = fixture.Create<int>();
+            var expectedIdUser = fixture.Create<int>();
 
-            var expectedContactPoliciesSetting =
+            var expectedContactPoliciesDto =
                 SetUpExpectedContactPoliciesSetting(accountName, out var expectedResultAsString, true);
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
-            contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(expectedNotFoundedIdUser);
-            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(It.IsAny<int>())).ReturnsAsync(expectedContactPoliciesSetting);
+            contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(expectedIdUser);
+            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(expectedIdUser)).ReturnsAsync(expectedContactPoliciesDto);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {
@@ -74,7 +74,6 @@ namespace Doppler.ContactPolicies.Api.Test
         {
             // Arrange
             int? expectedNotFoundedIdUser = null;
-            ContactPoliciesSettingsDto expected = null;
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
             contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(expectedNotFoundedIdUser);
@@ -107,13 +106,13 @@ namespace Doppler.ContactPolicies.Api.Test
             // Arrange
             var fixture = new Fixture();
             var expectedIdUser = fixture.Create<int>();
-            var expectedContactPoliciesSetting =
+            var expectedContactPoliciesDto =
                 SetUpExpectedContactPoliciesSetting(accountName, out var expectedResultAsString, false);
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
             contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(expectedIdUser);
             contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(expectedIdUser))
-                .ReturnsAsync(expectedContactPoliciesSetting);
+                .ReturnsAsync(expectedContactPoliciesDto);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {
@@ -144,7 +143,7 @@ namespace Doppler.ContactPolicies.Api.Test
                 string accountName, string token, HttpStatusCode expectedStatusCode)
         {
             var fixture = new Fixture();
-            var expectedNotFoundedIdUser = fixture.Create<int>();
+            var expectedIdUser = fixture.Create<int>();
             var expectedContactPoliciesDto = new ContactPoliciesSettingsDto()
             {
                 AccountName = accountName,
@@ -157,8 +156,8 @@ namespace Doppler.ContactPolicies.Api.Test
                 "accountName\":\"test1@test.com\",\"active\":false,\"emailsAmountByInterval\":null,\"intervalInDays\":null,\"excludedSubscribersLists\":null}";
 
             var contactPoliciesServiceMock = new Mock<IContactPoliciesService>();
-            contactPoliciesServiceMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(expectedNotFoundedIdUser);
-            contactPoliciesServiceMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(expectedNotFoundedIdUser))
+            contactPoliciesServiceMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(expectedIdUser);
+            contactPoliciesServiceMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(expectedIdUser))
                 .ReturnsAsync(expectedContactPoliciesDto).Verifiable();
 
 

@@ -106,13 +106,13 @@ namespace Doppler.ContactPolicies.Api.Test
         {
             // Arrange
             var fixture = new Fixture();
-            var expectedNotFoundedIdUser = fixture.Create<int>();
+            var expectedIdUser = fixture.Create<int>();
             var expectedContactPoliciesSetting =
                 SetUpExpectedContactPoliciesSetting(accountName, out var expectedResultAsString, false);
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
-            contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(expectedNotFoundedIdUser);
-            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(expectedNotFoundedIdUser))
+            contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(expectedIdUser);
+            contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(expectedIdUser))
                 .ReturnsAsync(expectedContactPoliciesSetting);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>

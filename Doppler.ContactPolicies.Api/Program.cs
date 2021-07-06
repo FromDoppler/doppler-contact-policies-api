@@ -1,7 +1,9 @@
+using Doppler.ContactPolicies.Api.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,6 +20,10 @@ namespace Doppler.ContactPolicies.Api
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .UseSerilog((hostContext, loggerConfiguration) =>
+                {
+                    loggerConfiguration.SetupSeriLog(hostContext.Configuration, hostContext.HostingEnvironment);
+                })
                 .ConfigureAppConfiguration((hostContext, configurationBuilder) =>
                 {
                     // It is if you want to override the configuration in your

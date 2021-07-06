@@ -44,7 +44,7 @@ namespace Doppler.ContactPolicies.Api.Test
             int? expectedNotFoundedIdUser = null;
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
-            contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName));
+            contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(expectedNotFoundedIdUser);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {
@@ -115,17 +115,18 @@ namespace Doppler.ContactPolicies.Api.Test
             // Arrange
             var fixture = new Fixture();
             var expectedFoundedIdUser = fixture.Create<int>();
-
+            string expectedExceptionMessage = "This action is not allowed for this user.";
             var expectedContactPoliciesSetting =
                 SetUpExpectedContactPoliciesSetting(accountName, out var expectedResultAsString, true);
             var expectedContactPoliciesSettingDao = expectedContactPoliciesSetting.ToDao();
 
+            // to allow throw exceptions
             var contactPoliciesRepositoryMock = new Mock<IContactPoliciesSettingsRepository>(MockBehavior.Strict);
 
             contactPoliciesRepositoryMock.Setup(x => x.GetIdUserByAccountName(accountName))
                 .ReturnsAsync(expectedFoundedIdUser);
             contactPoliciesRepositoryMock.Setup(x => x.UpdateContactPoliciesSettingsAsync(expectedFoundedIdUser, expectedContactPoliciesSettingDao))
-                .ThrowsAsync(new Exception("This action is not allowed for this user."));
+                .ThrowsAsync(new Exception(expectedExceptionMessage));
 
             var contactService = new ContactPoliciesService(contactPoliciesRepositoryMock.Object);
 
@@ -145,6 +146,9 @@ namespace Doppler.ContactPolicies.Api.Test
 
             // Assert
             Assert.NotNull(response);
+            var expectedRepositoryException = await Assert.ThrowsAsync<Exception>(() =>
+                contactPoliciesRepositoryMock.Object.UpdateContactPoliciesSettingsAsync(expectedFoundedIdUser, expectedContactPoliciesSettingDao));
+            Assert.Contains(expectedExceptionMessage, expectedRepositoryException.Message);
             Assert.Equal(expectedStatusCode, response.StatusCode);
         }
 

@@ -1,3 +1,6 @@
+using Doppler.ContactPolicies.Api.DopplerSecurity;
+using Doppler.ContactPolicies.Business.Logic.Services;
+using Doppler.ContactPolicies.Data.Access.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -5,9 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
-using Doppler.ContactPolicies.Data.Access.Core;
-using Doppler.ContactPolicies.Api.DopplerSecurity;
-using Doppler.ContactPolicies.Business.Logic.Services;
 
 namespace Doppler.ContactPolicies.Api
 {
@@ -31,6 +31,7 @@ namespace Doppler.ContactPolicies.Api
             services.AddAccessData();
             services.AddDopplerSecurity();
             services.AddControllers();
+            services.AddCors();
             services.AddSwaggerGen(c =>
             {
                 c.AddSecurityDefinition("Bearer",
@@ -74,6 +75,11 @@ namespace Doppler.ContactPolicies.Api
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseCors(policy => policy
+                .SetIsOriginAllowed(isOriginAllowed: _ => true)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials());
 
             app.UseAuthorization();
 

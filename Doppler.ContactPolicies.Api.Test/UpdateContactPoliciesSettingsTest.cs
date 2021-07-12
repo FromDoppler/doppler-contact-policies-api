@@ -2,12 +2,14 @@ using AutoFixture;
 using Doppler.ContactPolicies.Business.Logic.DTO;
 using Doppler.ContactPolicies.Business.Logic.Extensions;
 using Doppler.ContactPolicies.Business.Logic.Services;
+using Doppler.ContactPolicies.Data.Access.Entities;
 using Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettings;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -31,18 +33,18 @@ namespace Doppler.ContactPolicies.Api.Test
             _factory = factory;
         }
 
-        [Theory]
-        [InlineData(CONTACT_POLICIES_SETTINGS_REQUEST_BODY_STUB, "test1@test.com", TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518,
-            HttpStatusCode.NotFound)]
+        [Fact]
         public async Task
-            UpdateContactPoliciesSettings_Should_ReturnNotFound_When_UserWithSameAccountNameIsNotFound(
-                string contactPoliciesRequestBodyStub, string validAccountName, string token, HttpStatusCode expectedStatusCode)
+            UpdateContactPoliciesSettings_Should_ReturnNotFound_When_UserWithSameAccountNameIsNotFound()
         {
             // Arrange
-            int? expectedNotFoundedIdUser = null;
+            const string contactPoliciesRequestBodyStub = CONTACT_POLICIES_SETTINGS_REQUEST_BODY_STUB;
+            const string validAccountName = "test1@test.com";
+            const string token = TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518;
 
+            int? expectedNotFoundedIdUser = null;
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
-            contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(It.IsAny<string>())).ReturnsAsync(expectedNotFoundedIdUser);
+            contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(validAccountName)).ReturnsAsync(expectedNotFoundedIdUser);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {
@@ -55,29 +57,36 @@ namespace Doppler.ContactPolicies.Api.Test
                 Content = new StringContent(contactPoliciesRequestBodyStub, Encoding.UTF8, "application/json")
             };
 
-
             // Act
             var response = await client.SendAsync(request);
 
             // Assert
             Assert.NotNull(response);
-            Assert.Equal(expectedStatusCode, response.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
-        [Theory]
-        [InlineData(CONTACT_POLICIES_SETTINGS_REQUEST_BODY_STUB, "test1@test.com", TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518,
-            HttpStatusCode.OK)]
+        [Fact]
         public async Task
-            UpdateContactPoliciesSettings_Should_ReturnOK_When_UserWithSameAccountNameIsFound(
-                string contactPoliciesRequestBodyStub, string validAccountName, string token, HttpStatusCode expectedStatusCode)
+            UpdateContactPoliciesSettings_Should_ReturnOK_When_UserWithSameAccountNameIsFound()
         {
             // Arrange
+            const string contactPoliciesRequestBodyStub = CONTACT_POLICIES_SETTINGS_REQUEST_BODY_STUB;
+            const string validAccountName = "test1@test.com";
+            const string token = TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518;
+
             var fixture = new Fixture();
             var foundedIdUser = fixture.Create<int>();
-            var contactPoliciesSettings = fixture.Create<ContactPoliciesSettingsDto>();
+            var contactPoliciesSettings = new ContactPoliciesSettingsDto
+            {
+                AccountName = validAccountName,
+                IntervalInDays = 10,
+                Active = true,
+                EmailsAmountByInterval = 5,
+                ExcludedSubscribersLists = new List<ExcludedSubscribersLists>()
+            };
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
-            contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(It.IsAny<string>())).ReturnsAsync(foundedIdUser);
+            contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(validAccountName)).ReturnsAsync(foundedIdUser);
             contactPoliciesMock.Setup(x => x.UpdateContactPoliciesSettingsAsync(foundedIdUser, contactPoliciesSettings));
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
@@ -96,26 +105,34 @@ namespace Doppler.ContactPolicies.Api.Test
 
             // Assert
             Assert.NotNull(response);
-            Assert.Equal(expectedStatusCode, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         }
 
-        [Theory]
-        [InlineData(CONTACT_POLICIES_SETTINGS_REQUEST_BODY_STUB, "test1@test.com", TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518,
-            HttpStatusCode.InternalServerError)]
+        [Fact]
         public async Task
-            UpdateContactPoliciesSettings_Should_ReturnInternalServerError_When_UserWithSameAccountNameIsFoundButDoesNotHavePermissions(
-                string contactPoliciesRequestBodyStub, string validAccountName, string token, HttpStatusCode expectedStatusCode)
+            UpdateContactPoliciesSettings_Should_ReturnInternalServerError_When_UserWithSameAccountNameIsFoundButDoesNotHavePermissions()
         {
             // Arrange
+            const string contactPoliciesRequestBodyStub = CONTACT_POLICIES_SETTINGS_REQUEST_BODY_STUB;
+            const string validAccountName = "test1@test.com";
+            const string token = TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518;
+
             var fixture = new Fixture();
             var foundedIdUser = fixture.Create<int>();
-            var contactPoliciesSettings = fixture.Create<ContactPoliciesSettingsDto>();
+            var contactPoliciesSettings = new ContactPoliciesSettingsDto
+            {
+                AccountName = validAccountName,
+                IntervalInDays = 10,
+                Active = true,
+                EmailsAmountByInterval = 5,
+                ExcludedSubscribersLists = new List<ExcludedSubscribersLists>()
+            };
             var contactPoliciesSettingDao = contactPoliciesSettings.ToDao();
 
             // to allow throw exceptions
             var contactPoliciesRepositoryMock = new Mock<IContactPoliciesSettingsRepository>(MockBehavior.Strict);
 
-            contactPoliciesRepositoryMock.Setup(x => x.GetIdUserByAccountName(It.IsAny<string>()))
+            contactPoliciesRepositoryMock.Setup(x => x.GetIdUserByAccountName(validAccountName))
                 .ReturnsAsync(foundedIdUser);
             contactPoliciesRepositoryMock.Setup(x => x.UpdateContactPoliciesSettingsAsync(foundedIdUser, contactPoliciesSettingDao))
                 .ThrowsAsync(new Exception("This action is not allowed for this user."));
@@ -141,7 +158,7 @@ namespace Doppler.ContactPolicies.Api.Test
             var expectedRepositoryException = await Assert.ThrowsAsync<Exception>(() =>
                 contactPoliciesRepositoryMock.Object.UpdateContactPoliciesSettingsAsync(foundedIdUser, contactPoliciesSettingDao));
             Assert.Contains("This action is not allowed for this user.", expectedRepositoryException.Message);
-            Assert.Equal(expectedStatusCode, response.StatusCode);
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
     }
 }

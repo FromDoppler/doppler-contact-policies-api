@@ -99,7 +99,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
         [Fact]
         public async Task
-            UpdateContactPoliciesSettings_Should_ReturnInternalServerError_When_UserWithSameAccountNameIsFoundButDoesNotHavePermissions()
+            UpdateContactPoliciesSettings_Should_ReturnInternalServerError_When_UserWithSameAccountNameIsFoundAndRepositoryThrowException()
         {
             // Arrange
             const string contactPoliciesRequestBodyStub = CONTACT_POLICIES_SETTINGS_REQUEST_BODY_STUB;

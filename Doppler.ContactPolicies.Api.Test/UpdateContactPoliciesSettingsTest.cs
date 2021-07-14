@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -108,20 +107,12 @@ namespace Doppler.ContactPolicies.Api.Test
 
             var fixture = new Fixture();
             var foundedIdUser = fixture.Create<int>();
-            var contactPoliciesSettings = new ContactPoliciesSettings
-            {
-                AccountName = validAccountName,
-                IntervalInDays = 10,
-                Active = true,
-                EmailsAmountByInterval = 5,
-                ExcludedSubscribersLists = new List<ExcludedSubscribersLists>()
-            };
 
             // to allow throw exceptions
             var contactPoliciesRepositoryMock = new Mock<IContactPoliciesSettingsRepository>(MockBehavior.Strict);
             contactPoliciesRepositoryMock.Setup(x => x.GetIdUserByAccountName(validAccountName))
             .ReturnsAsync(foundedIdUser);
-            contactPoliciesRepositoryMock.Setup(x => x.UpdateContactPoliciesSettingsAsync(foundedIdUser, contactPoliciesSettings))
+            contactPoliciesRepositoryMock.Setup(x => x.UpdateContactPoliciesSettingsAsync(foundedIdUser, It.IsAny<ContactPoliciesSettings>()))
                 .ThrowsAsync(new Exception());
 
             var contactService = new ContactPoliciesService(contactPoliciesRepositoryMock.Object);

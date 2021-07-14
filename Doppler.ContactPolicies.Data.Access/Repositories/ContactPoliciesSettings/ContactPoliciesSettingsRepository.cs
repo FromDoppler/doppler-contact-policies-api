@@ -47,7 +47,6 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
 
         public async Task UpdateContactPoliciesSettingsAsync(int idUser, Entities.ContactPoliciesSettings contactPoliciesToInsert)
         {
-
             using var connection = await _databaseConnectionFactory.GetConnection();
 
             using var transaction = connection.BeginTransaction();

@@ -119,9 +119,10 @@ namespace Doppler.ContactPolicies.Api.Test
 
             // to allow throw exceptions
             var contactPoliciesRepositoryMock = new Mock<IContactPoliciesSettingsRepository>(MockBehavior.Strict);
-
             contactPoliciesRepositoryMock.Setup(x => x.GetIdUserByAccountName(validAccountName))
-                .ReturnsAsync(foundedIdUser);
+            .ReturnsAsync(foundedIdUser);
+            contactPoliciesRepositoryMock.Setup(x => x.UpdateContactPoliciesSettingsAsync(foundedIdUser, contactPoliciesSettings))
+                .ThrowsAsync(new Exception());
 
             var contactService = new ContactPoliciesService(contactPoliciesRepositoryMock.Object);
 
@@ -141,9 +142,6 @@ namespace Doppler.ContactPolicies.Api.Test
 
             // Assert
             Assert.NotNull(response);
-            var expectedRepositoryException = await Assert.ThrowsAsync<Exception>(() =>
-                contactPoliciesRepositoryMock.Object.UpdateContactPoliciesSettingsAsync(foundedIdUser, contactPoliciesSettings));
-            Assert.Contains("This action is not allowed for this user.", expectedRepositoryException.Message);
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
     }

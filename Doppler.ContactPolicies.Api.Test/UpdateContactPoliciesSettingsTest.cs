@@ -1,12 +1,9 @@
 using AutoFixture;
 using Doppler.ContactPolicies.Business.Logic.Services;
-using Doppler.ContactPolicies.Data.Access.Entities;
-using Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettings;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
-using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -64,7 +61,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
         [Fact]
         public async Task
-            UpdateContactPoliciesSettings_Should_ReturnOK_When_UserWithSameAccountNameIsFound()
+            UpdateContactPoliciesSettings_Should_ReturnOK_When_UserWithSameAccountNameIsFoundAndHasContactPoliciesFeatureIsTrue()
         {
             // Arrange
             const string contactPoliciesRequestBodyStub = CONTACT_POLICIES_SETTINGS_REQUEST_BODY_STUB;
@@ -75,11 +72,14 @@ namespace Doppler.ContactPolicies.Api.Test
             var foundedIdUser = fixture.Create<int>();
 
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
+            var userFeaturesMock = new Mock<IUserFeaturesService>();
             contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(validAccountName)).ReturnsAsync(foundedIdUser);
+            userFeaturesMock.Setup(x => x.GetUserContactPoliciesFeature(validAccountName)).ReturnsAsync(true);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {
                 services.AddSingleton(contactPoliciesMock.Object);
+                services.AddSingleton(userFeaturesMock.Object);
             })).CreateClient();
 
             var request = new HttpRequestMessage(HttpMethod.Put, $"/accounts/{validAccountName}/settings")
@@ -98,7 +98,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
         [Fact]
         public async Task
-            UpdateContactPoliciesSettings_Should_ReturnInternalServerError_When_UserWithSameAccountNameIsFoundAndRepositoryThrowExceptionOnUpdateContactPolicies()
+            UpdateContactPoliciesSettings_Should_ReturnForbidden_When_UserWithSameAccountNameIsFoundAndContactPoliciesFeatureIsFalse()
         {
             // Arrange
             const string contactPoliciesRequestBodyStub = CONTACT_POLICIES_SETTINGS_REQUEST_BODY_STUB;
@@ -108,19 +108,16 @@ namespace Doppler.ContactPolicies.Api.Test
             var fixture = new Fixture();
             var foundedIdUser = fixture.Create<int>();
 
-            // to allow throw exceptions
-            var contactPoliciesRepositoryMock = new Mock<IContactPoliciesSettingsRepository>(MockBehavior.Strict);
-            contactPoliciesRepositoryMock.Setup(x => x.GetIdUserByAccountName(validAccountName))
+            var contactPoliciesMock = new Mock<IContactPoliciesService>();
+            var userFeaturesMock = new Mock<IUserFeaturesService>();
+            contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(validAccountName))
             .ReturnsAsync(foundedIdUser);
-            contactPoliciesRepositoryMock.Setup(x => x.UpdateContactPoliciesSettingsAsync(foundedIdUser, It.IsAny<ContactPoliciesSettings>()))
-                .ThrowsAsync(new Exception());
-
-            var contactService = new ContactPoliciesService(contactPoliciesRepositoryMock.Object);
+            userFeaturesMock.Setup(x => x.GetUserContactPoliciesFeature(validAccountName)).ReturnsAsync(false);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {
-                services.AddSingleton(contactPoliciesRepositoryMock.Object);
-                services.AddSingleton(contactService);
+                services.AddSingleton(contactPoliciesMock.Object);
+                services.AddSingleton(userFeaturesMock.Object);
             })).CreateClient();
             var request = new HttpRequestMessage(HttpMethod.Put, $"/accounts/{validAccountName}/settings")
             {
@@ -133,7 +130,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
             // Assert
             Assert.NotNull(response);
-            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         }
     }
 }

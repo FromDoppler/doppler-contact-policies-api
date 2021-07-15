@@ -12,10 +12,12 @@ namespace Doppler.ContactPolicies.Api.Controllers
     public class ContactPolicies : ControllerBase
     {
         private readonly IContactPoliciesService _contactPoliciesService;
+        private readonly IUserFeaturesService _userFeaturesService;
 
-        public ContactPolicies(IContactPoliciesService contactPoliciesService)
+        public ContactPolicies(IContactPoliciesService contactPoliciesService, IUserFeaturesService userFeaturesService)
         {
             _contactPoliciesService = contactPoliciesService;
+            _userFeaturesService = userFeaturesService;
         }
 
         [Authorize(Policies.OWN_RESOURCE_OR_SUPERUSER)]
@@ -39,6 +41,12 @@ namespace Doppler.ContactPolicies.Api.Controllers
             var idUser = await _contactPoliciesService.GetIdUserByAccountName(accountName);
             if (idUser == null)
                 return NotFound($"Account {accountName} does not exist.");
+
+            var userHasContactPoliciesFeature = await _userFeaturesService.GetUserContactPoliciesFeature(accountName);
+            if (!userHasContactPoliciesFeature)
+            {
+                return new ObjectResult($"This action is not allowed for the user with Account {accountName}.") { StatusCode = 403 };
+            }
 
             await _contactPoliciesService.UpdateContactPoliciesSettingsAsync(idUser.Value, contactPoliciesSettings);
             return Ok();

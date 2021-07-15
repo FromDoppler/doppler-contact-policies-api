@@ -28,6 +28,8 @@ namespace Doppler.ContactPolicies.Api
         {
             services.Configure<DopplerDataBaseSettings>(Configuration.GetSection(nameof(DopplerDataBaseSettings)));
             services.AddScoped<IContactPoliciesService, ContactPoliciesService>();
+            services.AddHttpClient<IUserFeaturesService, UserFeaturesService>();
+            services.AddHttpContextAccessor();
             services.AddAccessData();
             services.AddDopplerSecurity();
             services.AddControllers();

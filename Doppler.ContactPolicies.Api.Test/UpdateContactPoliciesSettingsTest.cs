@@ -1,5 +1,6 @@
 using AutoFixture;
 using Doppler.ContactPolicies.Business.Logic.Services;
+using Doppler.ContactPolicies.Business.Logic.UserApiClient.Services;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -74,7 +75,7 @@ namespace Doppler.ContactPolicies.Api.Test
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
             var userFeaturesMock = new Mock<IUserFeaturesService>();
             contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(validAccountName)).ReturnsAsync(foundedIdUser);
-            userFeaturesMock.Setup(x => x.GetUserContactPoliciesFeature(validAccountName)).ReturnsAsync(true);
+            userFeaturesMock.Setup(x => x.GetUserContactPoliciesFeatureAsync(validAccountName)).ReturnsAsync(true);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {
@@ -112,7 +113,7 @@ namespace Doppler.ContactPolicies.Api.Test
             var userFeaturesMock = new Mock<IUserFeaturesService>();
             contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(validAccountName))
             .ReturnsAsync(foundedIdUser);
-            userFeaturesMock.Setup(x => x.GetUserContactPoliciesFeature(validAccountName)).ReturnsAsync(false);
+            userFeaturesMock.Setup(x => x.GetUserContactPoliciesFeatureAsync(validAccountName)).ReturnsAsync(false);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {

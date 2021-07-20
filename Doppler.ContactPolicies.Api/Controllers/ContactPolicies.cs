@@ -1,6 +1,7 @@
 using Doppler.ContactPolicies.Api.DopplerSecurity;
 using Doppler.ContactPolicies.Business.Logic.DTO;
 using Doppler.ContactPolicies.Business.Logic.Services;
+using Doppler.ContactPolicies.Business.Logic.UserApiClient.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -42,7 +43,7 @@ namespace Doppler.ContactPolicies.Api.Controllers
             if (idUser == null)
                 return NotFound($"Account {accountName} does not exist.");
 
-            var userHasContactPoliciesFeature = await _userFeaturesService.GetUserContactPoliciesFeature(accountName);
+            var userHasContactPoliciesFeature = await _userFeaturesService.GetUserContactPoliciesFeatureAsync(accountName);
             if (!userHasContactPoliciesFeature)
             {
                 return new ObjectResult($"This action is not allowed for the user with Account {accountName}.") { StatusCode = 403 };

@@ -20,7 +20,7 @@ namespace Doppler.ContactPolicies.Business.Logic.UserApiClient.Services
             _configuration = configuration;
             _logger = logger;
         }
-        public async Task<bool> GetUserContactPoliciesFeature(string accountName)
+        public async Task<bool> GetUserContactPoliciesFeatureAsync(string accountName)
         {
             try
             {

@@ -24,7 +24,7 @@ namespace Doppler.ContactPolicies.Business.Logic.UserApiClient.Services
         {
             try
             {
-                var baseUri = "https://apisint.fromdoppler.net/doppler-users-api";
+                var baseUri = _configuration.GetSection("UsersApiURL").Value;
                 var uri = new Uri(baseUri + $"/accounts/{accountName}/features");
 
                 var client = _clientFactory.CreateClient("users-api");

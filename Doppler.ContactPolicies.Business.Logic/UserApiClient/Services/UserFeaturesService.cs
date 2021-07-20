@@ -1,25 +1,24 @@
 using Doppler.ContactPolicies.Business.Logic.DTO;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
-namespace Doppler.ContactPolicies.Business.Logic.Services
+namespace Doppler.ContactPolicies.Business.Logic.UserApiClient.Services
 {
     public class UserFeaturesService : IUserFeaturesService
     {
-        private readonly HttpClient _httpClient;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IHttpClientFactory _clientFactory;
         private readonly IConfiguration _configuration;
+        private readonly ILogger<UserFeaturesService> _logger;
 
-        public UserFeaturesService(HttpClient httpClient, IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
+        public UserFeaturesService(IHttpClientFactory clientFactory, IConfiguration configuration, ILogger<UserFeaturesService> logger)
         {
-            _httpClient = httpClient;
-            _httpContextAccessor = httpContextAccessor;
+            _clientFactory = clientFactory;
             _configuration = configuration;
+            _logger = logger;
         }
         public async Task<bool> GetUserContactPoliciesFeature(string accountName)
         {
@@ -27,18 +26,17 @@ namespace Doppler.ContactPolicies.Business.Logic.Services
             {
                 var baseUri = _configuration.GetSection("UsersApiURL").Value;
                 var uri = new Uri(baseUri + $"/accounts/{accountName}/features");
-                // remove Bearer word from result
-                var headers = _httpContextAccessor.HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", string.Empty);
 
-                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", headers);
-                var responseString = await _httpClient.GetStringAsync(uri);
+                var client = _clientFactory.CreateClient("users-api");
+                var responseString = await client.GetStringAsync(uri);
 
                 var features = JsonConvert.DeserializeObject<Features>(responseString);
                 return features.ContactPolicies;
             }
             catch (HttpRequestException httpRequestException)
             {
-                return false;
+                _logger.LogError(httpRequestException.Message, "An error occurred.");
+                throw;
             }
         }
     }

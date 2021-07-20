@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Doppler.ContactPolicies.Business.Logic.Services
+namespace Doppler.ContactPolicies.Business.Logic.UserApiClient.Services
 {
     public interface IUserFeaturesService
     {

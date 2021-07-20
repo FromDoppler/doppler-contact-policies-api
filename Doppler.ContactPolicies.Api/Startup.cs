@@ -1,5 +1,6 @@
 using Doppler.ContactPolicies.Api.DopplerSecurity;
 using Doppler.ContactPolicies.Business.Logic.Services;
+using Doppler.ContactPolicies.Business.Logic.UserApiClient;
 using Doppler.ContactPolicies.Data.Access.Core;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -28,8 +29,7 @@ namespace Doppler.ContactPolicies.Api
         {
             services.Configure<DopplerDataBaseSettings>(Configuration.GetSection(nameof(DopplerDataBaseSettings)));
             services.AddScoped<IContactPoliciesService, ContactPoliciesService>();
-            services.AddHttpClient<IUserFeaturesService, UserFeaturesService>();
-            services.AddHttpContextAccessor();
+            services.AddUsersApiService();
             services.AddAccessData();
             services.AddDopplerSecurity();
             services.AddControllers();

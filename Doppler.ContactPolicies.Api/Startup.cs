@@ -28,6 +28,7 @@ namespace Doppler.ContactPolicies.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<DopplerDataBaseSettings>(Configuration.GetSection(nameof(DopplerDataBaseSettings)));
+            services.Configure<UserFeaturesServiceSettings>(Configuration.GetSection(nameof(UserFeaturesServiceSettings)));
             services.AddScoped<IContactPoliciesService, ContactPoliciesService>();
             services.AddUsersApiService();
             services.AddAccessData();

@@ -12,20 +12,20 @@ namespace Doppler.ContactPolicies.Business.Logic.UserApiClient.Services
     public class UserFeaturesService : IUserFeaturesService
     {
         private readonly IHttpClientFactory _clientFactory;
-        private readonly IOptions<UserFeaturesServiceSettings> _userFeaturesServiceSettings;
+        private readonly UserFeaturesServiceSettings _userFeaturesServiceSettings;
         private readonly ILogger<UserFeaturesService> _logger;
 
         public UserFeaturesService(IHttpClientFactory clientFactory, IOptions<UserFeaturesServiceSettings> userFeaturesServiceSettings, ILogger<UserFeaturesService> logger)
         {
             _clientFactory = clientFactory;
-            _userFeaturesServiceSettings = userFeaturesServiceSettings;
+            _userFeaturesServiceSettings = userFeaturesServiceSettings.Value;
             _logger = logger;
         }
         public async Task<bool> GetUserContactPoliciesFeatureAsync(string accountName)
         {
             try
             {
-                var baseUri = _userFeaturesServiceSettings.Value.UsersApiURL;
+                var baseUri = _userFeaturesServiceSettings.UsersApiUrl;
                 var uri = new Uri(baseUri + $"/accounts/{accountName}/features");
 
                 var client = _clientFactory.CreateClient("users-api");

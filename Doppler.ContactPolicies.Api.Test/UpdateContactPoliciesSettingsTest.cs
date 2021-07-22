@@ -62,7 +62,7 @@ namespace Doppler.ContactPolicies.Api.Test
 
         [Fact]
         public async Task
-            UpdateContactPoliciesSettings_Should_ReturnOK_When_UserWithSameAccountNameIsFoundAndHasContactPoliciesFeatureIsTrue()
+            UpdateContactPoliciesSettings_Should_ReturnOK_When_UserWithSameAccountNameIsFoundAndHasContactPoliciesFeature()
         {
             // Arrange
             const string contactPoliciesRequestBodyStub = CONTACT_POLICIES_SETTINGS_REQUEST_BODY_STUB;
@@ -75,7 +75,7 @@ namespace Doppler.ContactPolicies.Api.Test
             var contactPoliciesMock = new Mock<IContactPoliciesService>();
             var userFeaturesMock = new Mock<IUserFeaturesService>();
             contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(validAccountName)).ReturnsAsync(foundedIdUser);
-            userFeaturesMock.Setup(x => x.GetUserContactPoliciesFeatureAsync(validAccountName)).ReturnsAsync(true);
+            userFeaturesMock.Setup(x => x.HasContactPoliciesFeatureAsync(validAccountName)).ReturnsAsync(true);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {
@@ -113,7 +113,7 @@ namespace Doppler.ContactPolicies.Api.Test
             var userFeaturesMock = new Mock<IUserFeaturesService>();
             contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(validAccountName))
             .ReturnsAsync(foundedIdUser);
-            userFeaturesMock.Setup(x => x.GetUserContactPoliciesFeatureAsync(validAccountName)).ReturnsAsync(false);
+            userFeaturesMock.Setup(x => x.HasContactPoliciesFeatureAsync(validAccountName)).ReturnsAsync(false);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {

@@ -2,9 +2,9 @@ using Doppler.ContactPolicies.Business.Logic.DTO;
 using Doppler.ContactPolicies.Business.Logic.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using System;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace Doppler.ContactPolicies.Business.Logic.UserApiClient.Services
@@ -21,7 +21,7 @@ namespace Doppler.ContactPolicies.Business.Logic.UserApiClient.Services
             _userFeaturesServiceSettings = userFeaturesServiceSettings.Value;
             _logger = logger;
         }
-        public async Task<bool> GetUserContactPoliciesFeatureAsync(string accountName)
+        public async Task<bool> HasContactPoliciesFeatureAsync(string accountName)
         {
             try
             {
@@ -29,9 +29,7 @@ namespace Doppler.ContactPolicies.Business.Logic.UserApiClient.Services
                 var uri = new Uri(baseUri + $"/accounts/{accountName}/features");
 
                 var client = _clientFactory.CreateClient("users-api");
-                var responseString = await client.GetStringAsync(uri);
-
-                var features = JsonConvert.DeserializeObject<Features>(responseString);
+                var features = await client.GetFromJsonAsync<Features>(uri);
                 return features.ContactPolicies;
             }
             catch (Exception exception)

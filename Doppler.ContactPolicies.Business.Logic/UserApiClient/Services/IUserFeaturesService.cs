@@ -4,6 +4,6 @@ namespace Doppler.ContactPolicies.Business.Logic.UserApiClient.Services
 {
     public interface IUserFeaturesService
     {
-        Task<bool> GetUserContactPoliciesFeatureAsync(string accountName);
+        Task<bool> HasContactPoliciesFeatureAsync(string accountName);
     }
 }

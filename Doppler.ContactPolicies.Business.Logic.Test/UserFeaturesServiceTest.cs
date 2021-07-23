@@ -77,12 +77,18 @@ namespace Doppler.ContactPolicies.Business.Logic.Test
             userFeaturesServiceSettingsStub.Setup(x => x.Value).Returns(usersApiUrl);
 
             var sut = new UserFeaturesService(clientFactoryMock.Object, userFeaturesServiceSettingsStub.Object, loggerStub.Object);
-
-            // Act
-            Action act = async () => await sut.HasContactPoliciesFeatureAsync(It.IsAny<string>());
+            var accountName = It.IsAny<string>();
 
             // Assert
-            var ex = await Assert.ThrowsAsync<HttpRequestException>(async () => await sut.HasContactPoliciesFeatureAsync(It.IsAny<string>()));
+            var ex = await Assert.ThrowsAsync<HttpRequestException>(async () => await sut.HasContactPoliciesFeatureAsync(accountName));
+            loggerStub.Verify(
+                x => x.Log(
+                    It.Is<LogLevel>(l => l == LogLevel.Error),
+                    It.IsAny<EventId>(),
+                    It.Is<It.IsAnyType>((v, t) => v.ToString() == $"Failed to get contact policies feature with account name {accountName}"),
+                    It.IsAny<Exception>(),
+                    It.Is<Func<It.IsAnyType, Exception, string>>((v, t) => true)),
+                Times.Once);
             Assert.Equal(expectedStatusCode, ex.StatusCode);
         }
     }

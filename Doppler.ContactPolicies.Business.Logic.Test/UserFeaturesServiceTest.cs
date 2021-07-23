@@ -1,3 +1,4 @@
+using AutoFixture;
 using Doppler.ContactPolicies.Business.Logic.Services;
 using Doppler.ContactPolicies.Business.Logic.UserApiClient.Services;
 using Microsoft.Extensions.Logging;
@@ -77,7 +78,8 @@ namespace Doppler.ContactPolicies.Business.Logic.Test
             userFeaturesServiceSettingsStub.Setup(x => x.Value).Returns(usersApiUrl);
 
             var sut = new UserFeaturesService(clientFactoryMock.Object, userFeaturesServiceSettingsStub.Object, loggerStub.Object);
-            var accountName = It.IsAny<string>();
+            var fixture = new Fixture();
+            var accountName = fixture.Create<string>();
 
             // Assert
             var ex = await Assert.ThrowsAsync<HttpRequestException>(async () => await sut.HasContactPoliciesFeatureAsync(accountName));

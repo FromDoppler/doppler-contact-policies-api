@@ -10,14 +10,13 @@ namespace Doppler.ContactPolicies.Business.Logic.Test
 {
     public class ContactPoliciesServiceTest
     {
-        [Theory]
-        [InlineData("prueba@makingsense.com")]
+        [Fact]
         public async Task
-            GetContactPoliciesSettings_Should_ReturnContactPoliciesSettings_When_UserWithSameAccountNameIsFoundAndContactPoliciesAreActivated(
-                string accountName)
+            GetContactPoliciesSettings_Should_ReturnContactPoliciesSettings_When_UserWithSameAccountNameIsFoundAndContactPoliciesAreActivated()
         {
             // Arrange
             var fixture = new Fixture();
+            string accountName = "prueba@makingsense.com";
             var expected = fixture.Build<ContactPoliciesSettings>()
                 .With(x => x.AccountName, accountName)
                 .With(x => x.Active, true)

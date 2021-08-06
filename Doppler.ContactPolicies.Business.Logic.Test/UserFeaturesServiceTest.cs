@@ -1,14 +1,13 @@
 using AutoFixture;
 using Doppler.ContactPolicies.Business.Logic.Services;
 using Doppler.ContactPolicies.Business.Logic.UserApiClient.Services;
+using Flurl.Http;
+using Flurl.Http.Testing;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
-using Moq.Protected;
 using System;
 using System.Net;
-using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -16,25 +15,19 @@ namespace Doppler.ContactPolicies.Business.Logic.Test
 {
     public class UserFeaturesServiceTest
     {
-        [Theory(Skip = "Working on http client mock up")]
+        [Theory]
         [InlineData(true)]
         [InlineData(false)]
         public async Task HasContactPoliciesFeatureAsync_Should_ReturnCorrectResult_When_Features_With_ContactPolicies_IsReturned(bool expectedFeatureContactPolicies)
         {
             // Arrange
-            var httpMessageHandlerStub = new Mock<HttpMessageHandler>();
-            httpMessageHandlerStub.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(),
-                    ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync(new HttpResponseMessage
-                {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(
-                        $"{{\"contactPolicies\":{expectedFeatureContactPolicies.ToString().ToLower()}}}"),
-                });
+            using var httpTest = new HttpTest();
+
+            httpTest
+                .RespondWith($"{{\"contactPolicies\":{expectedFeatureContactPolicies.ToString().ToLower()}}}", (int)HttpStatusCode.OK);
+
             UserFeaturesServiceSettings usersApiUrl = new UserFeaturesServiceSettings { UsersApiURL = "http://test.com/" };
 
-            var httpClient = new HttpClient(httpMessageHandlerStub.Object);
             var usersApiTokenGetterMock = new Mock<IUsersApiTokenGetter>();
 
             var loggerStub = new Mock<ILogger<UserFeaturesService>>();
@@ -51,23 +44,18 @@ namespace Doppler.ContactPolicies.Business.Logic.Test
             Assert.Equal(expectedFeatureContactPolicies, result);
         }
 
-        [Theory(Skip = "Working on http client mock up")]
-        [InlineData(HttpStatusCode.Forbidden, HttpStatusCode.Forbidden)]
-        [InlineData(HttpStatusCode.NotFound, HttpStatusCode.NotFound)]
-        public async Task HasContactPoliciesFeatureAsync_Should_ReturnCorrectStatusCode_When_ThrowException(HttpStatusCode mockStatusCode, HttpStatusCode expectedStatusCode)
+        [Theory]
+        [InlineData((int)HttpStatusCode.Forbidden, (int)HttpStatusCode.Forbidden)]
+        [InlineData((int)HttpStatusCode.NotFound, (int)HttpStatusCode.NotFound)]
+        public async Task HasContactPoliciesFeatureAsync_Should_ReturnCorrectStatusCode_When_ThrowException(int mockStatusCode, int expectedStatusCode)
         {
             // Arrange
-            var httpMessageHandlerStub = new Mock<HttpMessageHandler>();
-            httpMessageHandlerStub.Protected()
-                .Setup<Task<HttpResponseMessage>>("SendAsync", ItExpr.IsAny<HttpRequestMessage>(), ItExpr.IsAny<CancellationToken>())
-                .ReturnsAsync(new HttpResponseMessage
-                {
-                    StatusCode = mockStatusCode
-                })
-                .Verifiable();
+            using var httpTest = new HttpTest();
+
+            httpTest.RespondWith(string.Empty, mockStatusCode);
+
             UserFeaturesServiceSettings usersApiUrl = new UserFeaturesServiceSettings { UsersApiURL = "http://test.com/" };
 
-            var httpClient = new HttpClient(httpMessageHandlerStub.Object);
             var usersApiTokenGetterMock = new Mock<IUsersApiTokenGetter>();
 
             var loggerStub = new Mock<ILogger<UserFeaturesService>>();
@@ -80,7 +68,7 @@ namespace Doppler.ContactPolicies.Business.Logic.Test
             var accountName = fixture.Create<string>();
 
             // Assert
-            var ex = await Assert.ThrowsAsync<HttpRequestException>(async () => await sut.HasContactPoliciesFeatureAsync(accountName));
+            var ex = await Assert.ThrowsAsync<FlurlHttpException>(async () => await sut.HasContactPoliciesFeatureAsync(accountName));
             loggerStub.Verify(
                 x => x.Log(
                     It.Is<LogLevel>(l => l == LogLevel.Error),

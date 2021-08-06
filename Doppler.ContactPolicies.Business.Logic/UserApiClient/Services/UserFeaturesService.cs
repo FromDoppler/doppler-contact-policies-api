@@ -1,11 +1,9 @@
 using Doppler.ContactPolicies.Business.Logic.DTO;
 using Doppler.ContactPolicies.Business.Logic.Services;
+using Flurl.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 namespace Doppler.ContactPolicies.Business.Logic.UserApiClient.Services
@@ -15,8 +13,6 @@ namespace Doppler.ContactPolicies.Business.Logic.UserApiClient.Services
         private readonly IUsersApiTokenGetter _usersApiTokenGetter;
         private readonly UserFeaturesServiceSettings _userFeaturesServiceSettings;
         private readonly ILogger<UserFeaturesService> _logger;
-
-        private static readonly HttpClient client = new HttpClient();
 
         public UserFeaturesService(IUsersApiTokenGetter usersApiTokenGetter, IOptions<UserFeaturesServiceSettings> userFeaturesServiceSettings, ILogger<UserFeaturesService> logger)
         {
@@ -33,14 +29,10 @@ namespace Doppler.ContactPolicies.Business.Logic.UserApiClient.Services
 
                 var usersApiToken = await _usersApiTokenGetter.GetTokenAsync();
 
-                var request = new HttpRequestMessage(HttpMethod.Get, uri)
-                {
-                    Headers = { { "Authorization", $"Bearer {usersApiToken}" } }
-                };
-
-                var response = await client.SendAsync(request);
-
-                var features = await response.Content.ReadFromJsonAsync<Features>();
+                var features = await uri
+                    .WithHeader("Authorization", $"Bearer {usersApiToken}")
+                    .GetAsync()
+                    .ReceiveJson<Features>();
 
                 return features.ContactPolicies;
             }

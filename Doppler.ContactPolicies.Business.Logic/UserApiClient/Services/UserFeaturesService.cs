@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
@@ -11,13 +12,15 @@ namespace Doppler.ContactPolicies.Business.Logic.UserApiClient.Services
 {
     public class UserFeaturesService : IUserFeaturesService
     {
-        private readonly IHttpClientFactory _clientFactory;
+        private readonly IUsersApiTokenGetter _usersApiTokenGetter;
         private readonly UserFeaturesServiceSettings _userFeaturesServiceSettings;
         private readonly ILogger<UserFeaturesService> _logger;
 
-        public UserFeaturesService(IHttpClientFactory clientFactory, IOptions<UserFeaturesServiceSettings> userFeaturesServiceSettings, ILogger<UserFeaturesService> logger)
+        private static readonly HttpClient client = new HttpClient();
+
+        public UserFeaturesService(IUsersApiTokenGetter usersApiTokenGetter, IOptions<UserFeaturesServiceSettings> userFeaturesServiceSettings, ILogger<UserFeaturesService> logger)
         {
-            _clientFactory = clientFactory;
+            _usersApiTokenGetter = usersApiTokenGetter;
             _userFeaturesServiceSettings = userFeaturesServiceSettings.Value;
             _logger = logger;
         }
@@ -28,8 +31,17 @@ namespace Doppler.ContactPolicies.Business.Logic.UserApiClient.Services
                 var baseUri = _userFeaturesServiceSettings.UsersApiURL;
                 var uri = new Uri(baseUri + $"/accounts/{accountName}/features");
 
-                var client = _clientFactory.CreateClient("users-api");
-                var features = await client.GetFromJsonAsync<Features>(uri);
+                var usersApiToken = await _usersApiTokenGetter.GetTokenAsync();
+
+                var request = new HttpRequestMessage(HttpMethod.Get, uri)
+                {
+                    Headers = { { "Authorization", $"Bearer {usersApiToken}" } }
+                };
+
+                var response = await client.SendAsync(request);
+
+                var features = await response.Content.ReadFromJsonAsync<Features>();
+
                 return features.ContactPolicies;
             }
             catch (Exception exception)

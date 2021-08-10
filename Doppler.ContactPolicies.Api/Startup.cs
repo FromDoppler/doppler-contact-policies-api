@@ -1,4 +1,5 @@
 using Doppler.ContactPolicies.Api.DopplerSecurity;
+using Doppler.ContactPolicies.Api.UsersApi;
 using Doppler.ContactPolicies.Business.Logic.Services;
 using Doppler.ContactPolicies.Business.Logic.UserApiClient;
 using Doppler.ContactPolicies.Data.Access.Core;

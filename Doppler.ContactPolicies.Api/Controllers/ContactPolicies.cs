@@ -29,6 +29,15 @@ namespace Doppler.ContactPolicies.Api.Controllers
             if (idUser == null)
                 return NotFound($"Account {accountName} does not exist.");
 
+            var userHasContactPoliciesFeature = await _userFeaturesService.HasContactPoliciesFeatureAsync(accountName);
+            if (!userHasContactPoliciesFeature)
+            {
+                return new ObjectResult($"User with Account {accountName} has not contact policies feature.")
+                {
+                    StatusCode = 403
+                };
+            }
+
             var contactPoliciesSettings = await _contactPoliciesService.GetContactPoliciesSettingsByIdUserAsync(idUser.Value);
 
             return new OkObjectResult(contactPoliciesSettings);

@@ -1,6 +1,7 @@
 using AutoFixture;
 using Doppler.ContactPolicies.Business.Logic.DTO;
 using Doppler.ContactPolicies.Business.Logic.Services;
+using Doppler.ContactPolicies.Business.Logic.UserApiClient.Services;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
@@ -75,9 +76,13 @@ namespace Doppler.ContactPolicies.Api.Test
             contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(It.IsAny<int>());
             contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(It.IsAny<int>())).ReturnsAsync(contactPoliciesSettings);
 
+            var userFeaturesMock = new Mock<IUserFeaturesService>();
+            userFeaturesMock.Setup(x => x.HasContactPoliciesFeatureAsync(accountName)).ReturnsAsync(true);
+
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {
                 services.AddSingleton(contactPoliciesMock.Object);
+                services.AddSingleton(userFeaturesMock.Object);
             })).CreateClient();
 
             var request = new HttpRequestMessage(HttpMethod.Get, url)

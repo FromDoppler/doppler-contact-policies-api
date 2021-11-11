@@ -1,6 +1,7 @@
 using AutoFixture;
 using Doppler.ContactPolicies.Business.Logic.DTO;
 using Doppler.ContactPolicies.Business.Logic.Services;
+using Doppler.ContactPolicies.Business.Logic.UserApiClient.Services;
 using Doppler.ContactPolicies.Data.Access.Entities;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -45,9 +46,13 @@ namespace Doppler.ContactPolicies.Api.Test
             contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(expectedIdUser);
             contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(expectedIdUser)).ReturnsAsync(expectedContactPoliciesDto);
 
+            var userFeaturesMock = new Mock<IUserFeaturesService>();
+            userFeaturesMock.Setup(x => x.HasContactPoliciesFeatureAsync(accountName)).ReturnsAsync(true);
+
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {
                 services.AddSingleton(contactPoliciesMock.Object);
+                services.AddSingleton(userFeaturesMock.Object);
             })).CreateClient();
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/accounts/{accountName}/settings")
@@ -114,9 +119,13 @@ namespace Doppler.ContactPolicies.Api.Test
             contactPoliciesMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(expectedIdUser))
                 .ReturnsAsync(expectedContactPoliciesDto);
 
+            var userFeaturesMock = new Mock<IUserFeaturesService>();
+            userFeaturesMock.Setup(x => x.HasContactPoliciesFeatureAsync(accountName)).ReturnsAsync(true);
+
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {
                 services.AddSingleton(contactPoliciesMock.Object);
+                services.AddSingleton(userFeaturesMock.Object);
             })).CreateClient();
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/accounts/{accountName}/settings")
@@ -159,10 +168,13 @@ namespace Doppler.ContactPolicies.Api.Test
             contactPoliciesServiceMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(expectedIdUser))
                 .ReturnsAsync(expectedContactPoliciesDto).Verifiable();
 
+            var userFeaturesMock = new Mock<IUserFeaturesService>();
+            userFeaturesMock.Setup(x => x.HasContactPoliciesFeatureAsync(accountName)).ReturnsAsync(true);
 
             var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
             {
                 services.AddSingleton(contactPoliciesServiceMock.Object);
+                services.AddSingleton(userFeaturesMock.Object);
             })).CreateClient();
 
             var request = new HttpRequestMessage(HttpMethod.Get, $"/accounts/{accountName}/settings")

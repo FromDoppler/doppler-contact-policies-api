@@ -193,6 +193,40 @@ namespace Doppler.ContactPolicies.Api.Test
             Assert.Contains(expectedResultAsString, contentAsString);
         }
 
+        [Theory]
+        [InlineData("test1@test.com", TOKEN_ACCOUNT_123_TEST1_AT_TEST_DOT_COM_EXPIRE_20330518,
+            HttpStatusCode.Forbidden)]
+        public async Task
+            GetContactPoliciesSettings_Should_ReturnForbidden_When_UserHasNotContactPoliciesFeature(
+                string accountName, string token, HttpStatusCode expectedStatusCode)
+        {
+            // Arrange
+            var fixture = new Fixture();
+
+            var contactPoliciesMock = new Mock<IContactPoliciesService>();
+            contactPoliciesMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(fixture.Create<int>());
+
+            var userFeaturesMock = new Mock<IUserFeaturesService>();
+            userFeaturesMock.Setup(x => x.HasContactPoliciesFeatureAsync(accountName)).ReturnsAsync(false);
+
+            var client = _factory.WithWebHostBuilder((e) => e.ConfigureTestServices(services =>
+            {
+                services.AddSingleton(contactPoliciesMock.Object);
+                services.AddSingleton(userFeaturesMock.Object);
+            })).CreateClient();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, $"/accounts/{accountName}/settings")
+            {
+                Headers = { { "Authorization", $"Bearer {token}" } }
+            };
+
+            // Act
+            var response = await client.SendAsync(request);
+
+            // Assert
+            Assert.Equal(expectedStatusCode, response.StatusCode);
+        }
+
         private ContactPoliciesSettingsDto SetUpExpectedContactPoliciesSetting(string accountName,
             out string expectedResultAsString, bool isActive)
         {

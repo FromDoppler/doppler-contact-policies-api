@@ -50,7 +50,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
             using var connection = await _databaseConnectionFactory.GetConnection();
 
             using var transaction = connection.BeginTransaction();
-            const string updateQuery =
+            const string upsertQuery =
                 @"update [UserShippingLimit] set Active = @Active, Interval = @IntervalInDays, Amount = @EmailsAmountByInterval
                 from [UserShippingLimit] usl
                 where usl.IdUser = @IdUser;
@@ -58,7 +58,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
                 if @@ROWCOUNT = 0
                     insert into [UserShippingLimit] ([IdUser] ,[Active] ,[Amount] ,[Interval]) VALUES (@IdUser, @Active, @EmailsAmountByInterval, @IntervalInDays);";
 
-            var affectedRows = await connection.ExecuteAsync(updateQuery, new
+            var affectedRows = await connection.ExecuteAsync(upsertQuery, new
             {
                 IdUser = idUser,
                 contactPoliciesToInsert.IntervalInDays,

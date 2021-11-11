@@ -55,6 +55,9 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
                 from [UserShippingLimit] usl
                 where usl.IdUser = @IdUser;
 
+                if @@ROWCOUNT = 0
+                    insert into [UserShippingLimit] ([IdUser] ,[Active] ,[Amount] ,[Interval]) VALUES (@IdUser, @Active, @EmailsAmountByInterval, @IntervalInDays);";
+
             var affectedRows = await connection.ExecuteAsync(updateQuery, new
             {
                 IdUser = idUser,

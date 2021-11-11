@@ -24,7 +24,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
             const string query =
                 @"select convert(bit, (case when usl.IdUser is null then 0 else 1 end)) as UserHasContactPolicies, usl.Active, usl.Interval [IntervalInDays], usl.Amount [EmailsAmountByInterval], u.Email [AccountName]
                 from [User] u
-                left join [UserShippingLimit] usl on u.IdUser = usl.IdUser and usl.Enabled = 1
+                left join [UserShippingLimit] usl on u.IdUser = usl.IdUser
                 where u.IdUser = @IdUser;
                 select sl.IdSubscribersList [Id], sl.Name
                 from [SubscribersListXShippingLimit] sls
@@ -50,12 +50,15 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
             using var connection = await _databaseConnectionFactory.GetConnection();
 
             using var transaction = connection.BeginTransaction();
-            const string updateQuery =
+            const string upsertQuery =
                 @"update [UserShippingLimit] set Active = @Active, Interval = @IntervalInDays, Amount = @EmailsAmountByInterval
                 from [UserShippingLimit] usl
-                where usl.IdUser = @IdUser and usl.Enabled = 1;";
+                where usl.IdUser = @IdUser;
 
-            var affectedRows = await connection.ExecuteAsync(updateQuery, new
+                if @@ROWCOUNT = 0
+                    insert into [UserShippingLimit] ([IdUser] ,[Active] ,[Amount] ,[Interval]) VALUES (@IdUser, @Active, @EmailsAmountByInterval, @IntervalInDays);";
+
+            var affectedRows = await connection.ExecuteAsync(upsertQuery, new
             {
                 IdUser = idUser,
                 contactPoliciesToInsert.IntervalInDays,

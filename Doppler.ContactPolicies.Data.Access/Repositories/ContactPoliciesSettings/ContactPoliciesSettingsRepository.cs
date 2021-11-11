@@ -53,7 +53,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
             const string updateQuery =
                 @"update [UserShippingLimit] set Active = @Active, Interval = @IntervalInDays, Amount = @EmailsAmountByInterval
                 from [UserShippingLimit] usl
-                where usl.IdUser = @IdUser and usl.Enabled = 1;";
+                where usl.IdUser = @IdUser;
 
             var affectedRows = await connection.ExecuteAsync(updateQuery, new
             {

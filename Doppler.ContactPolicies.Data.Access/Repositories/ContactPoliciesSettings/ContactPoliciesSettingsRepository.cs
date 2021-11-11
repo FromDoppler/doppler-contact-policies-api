@@ -24,7 +24,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
             const string query =
                 @"select convert(bit, (case when usl.IdUser is null then 0 else 1 end)) as UserHasContactPolicies, usl.Active, usl.Interval [IntervalInDays], usl.Amount [EmailsAmountByInterval], u.Email [AccountName]
                 from [User] u
-                left join [UserShippingLimit] usl on u.IdUser = usl.IdUser and usl.Enabled = 1
+                left join [UserShippingLimit] usl on u.IdUser = usl.IdUser
                 where u.IdUser = @IdUser;
                 select sl.IdSubscribersList [Id], sl.Name
                 from [SubscribersListXShippingLimit] sls

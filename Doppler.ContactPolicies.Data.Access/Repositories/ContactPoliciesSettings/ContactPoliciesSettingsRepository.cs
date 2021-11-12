@@ -67,7 +67,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
             }, transaction);
 
             if (affectedRows == 0)
-                throw new Exception($"This action is not allowed for this user.");
+                throw new Exception($"User shipping limit could not be updated");
 
             await connection.ExecuteAsync(
                 @"delete [SubscribersListXShippingLimit] from [SubscribersListXShippingLimit] slxsl where slxsl.IdUser = @IdUser and  IdSubscribersList not in @Ids;",

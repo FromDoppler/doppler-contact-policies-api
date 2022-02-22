@@ -9,6 +9,6 @@ namespace Doppler.ContactPolicies.Data.Access.Core
 {
     public interface IDatabaseConnectionFactory
     {
-        Task<IDbConnection> GetConnection();
+        IDbConnection GetConnection();
     }
 }

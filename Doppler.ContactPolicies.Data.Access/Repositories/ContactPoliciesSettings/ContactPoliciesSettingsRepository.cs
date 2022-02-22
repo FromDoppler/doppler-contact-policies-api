@@ -20,7 +20,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
 
         public async Task<Entities.ContactPoliciesSettings> GetContactPoliciesSettingsByIdUserAsync(int idUser)
         {
-            using var connection = await _databaseConnectionFactory.GetConnection();
+            using var connection = _databaseConnectionFactory.GetConnection();
             const string query =
                 @"select convert(bit, (case when usl.IdUser is null then 0 else 1 end)) as UserHasContactPolicies, usl.Active, usl.Interval [IntervalInDays], usl.Amount [EmailsAmountByInterval], u.Email [AccountName]
                 from [User] u
@@ -47,7 +47,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
 
         public async Task UpdateContactPoliciesSettingsAsync(int idUser, Entities.ContactPoliciesSettings contactPoliciesToInsert)
         {
-            using var connection = await _databaseConnectionFactory.GetConnection();
+            using var connection = _databaseConnectionFactory.GetConnection();
 
             using var transaction = connection.BeginTransaction();
             const string upsertQuery =
@@ -92,7 +92,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
 
         public async Task<int?> GetIdUserByAccountName(string accountName)
         {
-            using var connection = await _databaseConnectionFactory.GetConnection();
+            using var connection = _databaseConnectionFactory.GetConnection();
             const string query =
                 @"select IdUser from [User] u where u.Email = @Email";
             var queryParams = new { Email = accountName };

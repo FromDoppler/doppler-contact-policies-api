@@ -25,6 +25,8 @@ namespace Doppler.ContactPolicies.Business.Logic.UserApiClient.Services
             try
             {
                 var baseUri = _userFeaturesServiceSettings.UsersApiURL;
+                // TODO: remove use of this endpoint, now the "ContactPolicies" are assumed to be true for all users
+                // [related ticket](https://makingsense.atlassian.net/browse/DOP-1095)
                 var uri = new Uri(baseUri + $"/accounts/{accountName}/features");
 
                 var usersApiToken = await _usersApiTokenGetter.GetTokenAsync();

@@ -28,6 +28,6 @@ package-lock.json
 [eE]ncrypted.[sS]ecret.*
 *.csproj.user
 *.key
-.doppler-ci
+doppler-jenkins-ci.groovy
 *.sql
 *.png

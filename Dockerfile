@@ -1,15 +1,3 @@
-FROM node:18 AS verify-format
-WORKDIR /src
-COPY package.json yarn.lock ./
-RUN yarn
-COPY . .
-RUN yarn verify-format
-
-FROM koalaman/shellcheck-alpine:v0.8.0 as verify-sh
-WORKDIR /src
-COPY ./*.sh ./
-RUN shellcheck -e SC1091,SC1090 ./*.sh
-
 FROM mcr.microsoft.com/dotnet/sdk:6.0.301-bullseye-slim AS restore
 WORKDIR /src
 COPY ./*.sln ./

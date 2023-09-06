@@ -37,5 +37,22 @@ namespace Doppler.ContactPolicies.Business.Logic.Extensions
                     : new List<ExcludedSubscribersLists>(contactPoliciesSettings.ExcludedSubscribersLists)
             };
         }
+
+        public static ContactPoliciesTimeRestriction ToDao(
+            this ContactPoliciesTimeRestrictionDto contactPoliciesTimeRestrictionDto)
+        {
+            if (contactPoliciesTimeRestrictionDto == null)
+            {
+                return null;
+            }
+
+            return new ContactPoliciesTimeRestriction
+            {
+                TimeSlotEnabled = contactPoliciesTimeRestrictionDto.TimeSlotEnabled,
+                HourFrom = contactPoliciesTimeRestrictionDto.HourFrom,
+                HourTo = contactPoliciesTimeRestrictionDto.HourTo,
+                WeekdaysEnabled = contactPoliciesTimeRestrictionDto.WeekdaysEnabled
+            };
+        }
     }
 }

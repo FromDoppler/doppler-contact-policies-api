@@ -38,6 +38,23 @@ namespace Doppler.ContactPolicies.Business.Logic.Extensions
             };
         }
 
+        public static ContactPoliciesTimeRestrictionDto ToDto(
+            this ContactPoliciesTimeRestriction timeRestriction)
+        {
+            if (timeRestriction == null)
+            {
+                return null;
+            }
+
+            return new ContactPoliciesTimeRestrictionDto
+            {
+                TimeSlotEnabled = timeRestriction.TimeSlotEnabled,
+                HourFrom = timeRestriction.HourFrom,
+                HourTo = timeRestriction.HourTo,
+                WeekdaysEnabled = timeRestriction.WeekdaysEnabled
+            };
+        }
+
         public static ContactPoliciesTimeRestriction ToDao(
             this ContactPoliciesTimeRestrictionDto contactPoliciesTimeRestrictionDto)
         {

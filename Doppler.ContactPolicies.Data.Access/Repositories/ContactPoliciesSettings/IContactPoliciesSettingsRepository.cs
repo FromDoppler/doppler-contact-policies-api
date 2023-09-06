@@ -8,5 +8,6 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
         Task<Entities.ContactPoliciesSettings> GetContactPoliciesSettingsByIdUserAsync(int idUser);
         Task UpdateContactPoliciesSettingsAsync(int idUser, Entities.ContactPoliciesSettings contactPoliciesToInsert, ContactPoliciesTimeRestriction contactPoliciesTimeRestrictionToInsert);
         Task<int?> GetIdUserByAccountName(string accountName);
+        Task<ContactPoliciesTimeRestriction> GetContactPoliciesTimeRestrictionByIdUserAsync(int idUser);
     }
 }

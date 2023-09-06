@@ -46,6 +46,26 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
             return contactPoliciesSettings;
         }
 
+        public async Task<ContactPoliciesTimeRestriction> GetContactPoliciesTimeRestrictionByIdUserAsync(int idUser)
+        {
+            using var connection = _databaseConnectionFactory.GetConnection();
+            const string query =
+                @"select
+                    ucptr.TimeSlotEnabled [TimeSlotEnabled],
+                    ucptr.HourFrom [HourFrom],
+                    ucptr.HourTo [HourTo],
+                    ucptr.WeekdaysEnabled [WeekdaysEnabled],
+                    u.Email [AccountName]
+                from [User] u
+                left join [UserContactPolicyTimeRestriction] ucptr on u.IdUser = ucptr.IdUser
+                where u.IdUser = @IdUser;";
+
+            var queryParams = new { IdUser = idUser };
+            var contactPoliciesTimeRestriction = await connection.QueryFirstOrDefaultAsync<ContactPoliciesTimeRestriction>(query, queryParams);
+
+            return contactPoliciesTimeRestriction;
+        }
+
         public async Task UpdateContactPoliciesSettingsAsync(
             int idUser,
             Entities.ContactPoliciesSettings contactPoliciesToInsert,

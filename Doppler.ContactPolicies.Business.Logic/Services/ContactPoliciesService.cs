@@ -18,6 +18,10 @@ namespace Doppler.ContactPolicies.Business.Logic.Services
         {
             var contactPoliciesSettings =
                 (await _contactPoliciesSettingsRepository.GetContactPoliciesSettingsByIdUserAsync(idUser)).ToDto();
+
+            contactPoliciesSettings.TimeRestriction =
+                (await _contactPoliciesSettingsRepository.GetContactPoliciesTimeRestrictionByIdUserAsync(idUser)).ToDto();
+
             return contactPoliciesSettings;
         }
 

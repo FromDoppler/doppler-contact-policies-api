@@ -21,10 +21,15 @@ namespace Doppler.ContactPolicies.Business.Logic.Test
                 .With(x => x.AccountName, accountName)
                 .With(x => x.Active, true)
                 .Create();
+            var expectedTimeRestriction = fixture.Build<ContactPoliciesTimeRestriction>()
+                .With(x => x.AccountName, accountName)
+                .Create();
 
             var contactPoliciesRepositoryMock = new Mock<IContactPoliciesSettingsRepository>();
             contactPoliciesRepositoryMock.Setup(x => x.GetContactPoliciesSettingsByIdUserAsync(It.IsAny<int>()))
                 .ReturnsAsync(expected).Verifiable();
+            contactPoliciesRepositoryMock.Setup(x => x.GetContactPoliciesTimeRestrictionByIdUserAsync(It.IsAny<int>()))
+                .ReturnsAsync(expectedTimeRestriction).Verifiable();
 
             var contactPoliciesSut = new ContactPoliciesService(contactPoliciesRepositoryMock.Object);
 

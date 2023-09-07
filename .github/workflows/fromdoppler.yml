@@ -10,11 +10,11 @@ on:
 
 jobs:
   dotnet:
-    name: .NET
+    name: Continuous Integration
     uses: FromDoppler/.github/.github/workflows/dotnet.yml@main
   docker:
     if: ${{ github.event_name == 'push' }}
-    name: Docker
+    name: Continuous Delivery
     uses: FromDoppler/.github/.github/workflows/continuous-delivery-dockerfile.yml@main
     secrets: inherit
     with:

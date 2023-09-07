@@ -145,7 +145,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
 
             if (affectedRows == 0)
             {
-                throw new Exception($"User Contact Policy Time Restriction could not be updated");
+                throw new Exception("User Contact Policy Time Restriction could not be updated");
             }
         }
 

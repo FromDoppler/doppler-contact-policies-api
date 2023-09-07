@@ -12,7 +12,7 @@ namespace Doppler.ContactPolicies.Business.Logic.DTO
         public int? HourFrom { get; set; }
 
         [Range(0, 23)]
-        [Required(ErrorMessage = "HourFrom is required.")]
+        [Required(ErrorMessage = "HourTo is required.")]
         public int? HourTo { get; set; }
 
         public bool WeekdaysEnabled { get; set; }

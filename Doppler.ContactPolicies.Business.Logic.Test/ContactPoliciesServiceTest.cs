@@ -1,8 +1,10 @@
 using AutoFixture;
+using Doppler.ContactPolicies.Business.Logic.DTO;
 using Doppler.ContactPolicies.Business.Logic.Services;
 using Doppler.ContactPolicies.Data.Access.Entities;
 using Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettings;
 using Moq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -40,6 +42,82 @@ namespace Doppler.ContactPolicies.Business.Logic.Test
             contactPoliciesRepositoryMock.Verify();
             Assert.Equal(actual.AccountName, expected.AccountName);
             Assert.True(actual.Active);
+        }
+
+        [Fact]
+        public async Task
+            UpdateContactPoliciesSettings_Should_InvokeContactPoliciesSettingsRepository_With_ProperParameters()
+        {
+            // Arrange
+            var idUser = 1000;
+
+            var excludedLists = new List<ExcludedSubscribersLists>
+            {
+                new ExcludedSubscribersLists() { Id = 1, Name = "Test" }
+            };
+            var timeRestrictionDto = new ContactPoliciesTimeRestrictionDto()
+            {
+                TimeSlotEnabled = true,
+                HourFrom = 0,
+                HourTo = 23,
+                WeekdaysEnabled = false,
+            };
+            var contactPoliciesSettingDto = new ContactPoliciesSettingsDto()
+            {
+                AccountName = "prueba@makingsense.com",
+                Active = true,
+                EmailsAmountByInterval = 999,
+                IntervalInDays = 30,
+                ExcludedSubscribersLists = excludedLists,
+                TimeRestriction = timeRestrictionDto,
+            };
+
+            var contactPoliciesSettingExpected = new ContactPoliciesSettings()
+            {
+                AccountName = null,
+                Active = true,
+                EmailsAmountByInterval = 999,
+                IntervalInDays = 30,
+                UserHasContactPolicies = false,
+                ExcludedSubscribersLists = excludedLists,
+            };
+            var contactPoliciesTimeRestrictionExpected = new ContactPoliciesTimeRestriction()
+            {
+                TimeSlotEnabled = true,
+                HourFrom = 0,
+                HourTo = 23,
+                WeekdaysEnabled = false,
+            };
+
+            var contactPoliciesSettingsRepositoryMock = new Mock<IContactPoliciesSettingsRepository>();
+
+            var contactPoliciesSut = new ContactPoliciesService(contactPoliciesSettingsRepositoryMock.Object);
+
+            // Act
+            await contactPoliciesSut.UpdateContactPoliciesSettingsAsync(idUser, contactPoliciesSettingDto);
+
+            // Assert
+            contactPoliciesSettingsRepositoryMock.Verify(
+                repo => repo.UpdateContactPoliciesSettingsAsync(
+                    idUser,
+                    It.Is<ContactPoliciesSettings>(cps =>
+                        cps.AccountName == contactPoliciesSettingExpected.AccountName
+                        && cps.Active == contactPoliciesSettingExpected.Active
+                        && cps.EmailsAmountByInterval == contactPoliciesSettingExpected.EmailsAmountByInterval
+                        && cps.IntervalInDays == contactPoliciesSettingExpected.IntervalInDays
+                        && cps.UserHasContactPolicies == contactPoliciesSettingExpected.UserHasContactPolicies
+                        && cps.ExcludedSubscribersLists.Count == contactPoliciesSettingExpected.ExcludedSubscribersLists.Count
+                        && cps.ExcludedSubscribersLists[0] == contactPoliciesSettingExpected.ExcludedSubscribersLists[0]
+                    ),
+                    It.Is<ContactPoliciesTimeRestriction>(cptr =>
+                        cptr.TimeSlotEnabled == contactPoliciesTimeRestrictionExpected.TimeSlotEnabled
+                        && cptr.HourFrom == contactPoliciesTimeRestrictionExpected.HourFrom
+                        && cptr.HourTo == contactPoliciesTimeRestrictionExpected.HourTo
+                        && cptr.WeekdaysEnabled == contactPoliciesTimeRestrictionExpected.WeekdaysEnabled
+                    )
+                ),
+                Times.Once
+            );
         }
     }
 }

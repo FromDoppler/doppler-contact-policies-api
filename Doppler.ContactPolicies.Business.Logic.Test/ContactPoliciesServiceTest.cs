@@ -55,65 +55,37 @@ namespace Doppler.ContactPolicies.Business.Logic.Test
             {
                 new ExcludedSubscribersLists() { Id = 1, Name = "Test" }
             };
-            var timeRestrictionDto = new ContactPoliciesTimeRestrictionDto()
-            {
-                TimeSlotEnabled = true,
-                HourFrom = 0,
-                HourTo = 23,
-                WeekdaysEnabled = false,
-            };
-            var contactPoliciesSettingDto = new ContactPoliciesSettingsDto()
-            {
-                AccountName = "prueba@makingsense.com",
-                Active = true,
-                EmailsAmountByInterval = 999,
-                IntervalInDays = 30,
-                ExcludedSubscribersLists = excludedLists,
-                TimeRestriction = timeRestrictionDto,
-            };
 
-            var contactPoliciesSettingExpected = new ContactPoliciesSettings()
-            {
-                AccountName = null,
-                Active = true,
-                EmailsAmountByInterval = 999,
-                IntervalInDays = 30,
-                UserHasContactPolicies = false,
-                ExcludedSubscribersLists = excludedLists,
-            };
-            var contactPoliciesTimeRestrictionExpected = new ContactPoliciesTimeRestriction()
-            {
-                TimeSlotEnabled = true,
-                HourFrom = 0,
-                HourTo = 23,
-                WeekdaysEnabled = false,
-            };
+            var fixture = new Fixture();
+            var contactPoliciesSettingsDto = fixture.Build<ContactPoliciesSettingsDto>()
+                .With(x => x.ExcludedSubscribersLists, excludedLists)
+                .Create();
 
             var contactPoliciesSettingsRepositoryMock = new Mock<IContactPoliciesSettingsRepository>();
 
             var contactPoliciesSut = new ContactPoliciesService(contactPoliciesSettingsRepositoryMock.Object);
 
             // Act
-            await contactPoliciesSut.UpdateContactPoliciesSettingsAsync(idUser, contactPoliciesSettingDto);
+            await contactPoliciesSut.UpdateContactPoliciesSettingsAsync(idUser, contactPoliciesSettingsDto);
 
             // Assert
             contactPoliciesSettingsRepositoryMock.Verify(
                 repo => repo.UpdateContactPoliciesSettingsAsync(
                     idUser,
                     It.Is<ContactPoliciesSettings>(cps =>
-                        cps.AccountName == contactPoliciesSettingExpected.AccountName
-                        && cps.Active == contactPoliciesSettingExpected.Active
-                        && cps.EmailsAmountByInterval == contactPoliciesSettingExpected.EmailsAmountByInterval
-                        && cps.IntervalInDays == contactPoliciesSettingExpected.IntervalInDays
-                        && cps.UserHasContactPolicies == contactPoliciesSettingExpected.UserHasContactPolicies
-                        && cps.ExcludedSubscribersLists.Count == contactPoliciesSettingExpected.ExcludedSubscribersLists.Count
-                        && cps.ExcludedSubscribersLists[0] == contactPoliciesSettingExpected.ExcludedSubscribersLists[0]
+                        cps.AccountName == null
+                        && cps.Active == contactPoliciesSettingsDto.Active
+                        && cps.EmailsAmountByInterval == contactPoliciesSettingsDto.EmailsAmountByInterval
+                        && cps.IntervalInDays == contactPoliciesSettingsDto.IntervalInDays
+                        && cps.UserHasContactPolicies == false
+                        && cps.ExcludedSubscribersLists.Count == contactPoliciesSettingsDto.ExcludedSubscribersLists.Count
+                        && cps.ExcludedSubscribersLists[0] == contactPoliciesSettingsDto.ExcludedSubscribersLists[0]
                     ),
                     It.Is<ContactPoliciesTimeRestriction>(cptr =>
-                        cptr.TimeSlotEnabled == contactPoliciesTimeRestrictionExpected.TimeSlotEnabled
-                        && cptr.HourFrom == contactPoliciesTimeRestrictionExpected.HourFrom
-                        && cptr.HourTo == contactPoliciesTimeRestrictionExpected.HourTo
-                        && cptr.WeekdaysEnabled == contactPoliciesTimeRestrictionExpected.WeekdaysEnabled
+                        cptr.TimeSlotEnabled == contactPoliciesSettingsDto.TimeRestriction.TimeSlotEnabled
+                        && cptr.HourFrom == contactPoliciesSettingsDto.TimeRestriction.HourFrom
+                        && cptr.HourTo == contactPoliciesSettingsDto.TimeRestriction.HourTo
+                        && cptr.WeekdaysEnabled == contactPoliciesSettingsDto.TimeRestriction.WeekdaysEnabled
                     )
                 ),
                 Times.Once

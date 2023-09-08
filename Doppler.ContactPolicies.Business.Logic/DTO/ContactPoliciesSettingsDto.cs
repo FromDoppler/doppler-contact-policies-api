@@ -16,5 +16,6 @@ namespace Doppler.ContactPolicies.Business.Logic.DTO
         [Required(ErrorMessage = "Interval days are required.")]
         public int? IntervalInDays { get; set; }
         public List<ExcludedSubscribersLists> ExcludedSubscribersLists { get; set; }
+        public ContactPoliciesTimeRestrictionDto TimeRestriction { get; set; }
     }
 }

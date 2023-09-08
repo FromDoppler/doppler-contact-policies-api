@@ -18,13 +18,18 @@ namespace Doppler.ContactPolicies.Business.Logic.Services
         {
             var contactPoliciesSettings =
                 (await _contactPoliciesSettingsRepository.GetContactPoliciesSettingsByIdUserAsync(idUser)).ToDto();
+
+            contactPoliciesSettings.TimeRestriction =
+                (await _contactPoliciesSettingsRepository.GetContactPoliciesTimeRestrictionByIdUserAsync(idUser)).ToDto();
+
             return contactPoliciesSettings;
         }
 
         public async Task UpdateContactPoliciesSettingsAsync(int idUser, ContactPoliciesSettingsDto contactPoliciesSettings)
         {
             var contactPoliciesToUpdate = contactPoliciesSettings.ToDao();
-            await _contactPoliciesSettingsRepository.UpdateContactPoliciesSettingsAsync(idUser, contactPoliciesToUpdate);
+            var timeRestrictionToUpdate = contactPoliciesSettings.TimeRestriction.ToDao();
+            await _contactPoliciesSettingsRepository.UpdateContactPoliciesSettingsAsync(idUser, contactPoliciesToUpdate, timeRestrictionToUpdate);
         }
 
         public async Task<int?> GetIdUserByAccountName(string accountName)

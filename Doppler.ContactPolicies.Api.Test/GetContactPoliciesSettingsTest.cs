@@ -161,7 +161,7 @@ namespace Doppler.ContactPolicies.Api.Test
                 ExcludedSubscribersLists = null
             };
             const string expectedResultAsString =
-                "accountName\":\"test1@test.com\",\"active\":false,\"emailsAmountByInterval\":null,\"intervalInDays\":null,\"excludedSubscribersLists\":null}";
+                "accountName\":\"test1@test.com\",\"active\":false,\"emailsAmountByInterval\":null,\"intervalInDays\":null,\"excludedSubscribersLists\":null,\"timeRestriction\":null}";
 
             var contactPoliciesServiceMock = new Mock<IContactPoliciesService>();
             contactPoliciesServiceMock.Setup(x => x.GetIdUserByAccountName(accountName)).ReturnsAsync(expectedIdUser);
@@ -249,7 +249,7 @@ namespace Doppler.ContactPolicies.Api.Test
                 }
             };
             expectedResultAsString =
-                $"{{\"accountName\":\"test1@test.com\",\"active\":{isActive.ToString().ToLower()},\"emailsAmountByInterval\":100,\"intervalInDays\":10,\"excludedSubscribersLists\":[{{\"id\":34,\"name\":\"Listado_Marketing\"}},{{\"id\":169,\"name\":\"Testing_ExcludeList\"}}]}}";
+                $"{{\"accountName\":\"test1@test.com\",\"active\":{isActive.ToString().ToLower()},\"emailsAmountByInterval\":100,\"intervalInDays\":10,\"excludedSubscribersLists\":[{{\"id\":34,\"name\":\"Listado_Marketing\"}},{{\"id\":169,\"name\":\"Testing_ExcludeList\"}}],\"timeRestriction\":null}}";
             return expectedContactPoliciesSetting;
         }
     }

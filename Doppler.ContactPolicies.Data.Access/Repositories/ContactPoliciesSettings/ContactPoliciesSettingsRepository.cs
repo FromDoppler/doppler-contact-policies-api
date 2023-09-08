@@ -2,6 +2,7 @@ using Dapper;
 using Doppler.ContactPolicies.Data.Access.Core;
 using Doppler.ContactPolicies.Data.Access.Entities;
 using System;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -45,7 +46,31 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
             return contactPoliciesSettings;
         }
 
-        public async Task UpdateContactPoliciesSettingsAsync(int idUser, Entities.ContactPoliciesSettings contactPoliciesToInsert)
+        public async Task<ContactPoliciesTimeRestriction> GetContactPoliciesTimeRestrictionByIdUserAsync(int idUser)
+        {
+            using var connection = _databaseConnectionFactory.GetConnection();
+            const string query =
+                @"select
+                    ucptr.TimeSlotEnabled [TimeSlotEnabled],
+                    ucptr.HourFrom [HourFrom],
+                    ucptr.HourTo [HourTo],
+                    ucptr.WeekdaysEnabled [WeekdaysEnabled],
+                    u.Email [AccountName]
+                from [User] u
+                left join [UserContactPolicyTimeRestriction] ucptr on u.IdUser = ucptr.IdUser
+                where u.IdUser = @IdUser;";
+
+            var queryParams = new { IdUser = idUser };
+            var contactPoliciesTimeRestriction = await connection.QueryFirstOrDefaultAsync<ContactPoliciesTimeRestriction>(query, queryParams);
+
+            return contactPoliciesTimeRestriction;
+        }
+
+        public async Task UpdateContactPoliciesSettingsAsync(
+            int idUser,
+            Entities.ContactPoliciesSettings contactPoliciesToInsert,
+            ContactPoliciesTimeRestriction contactPoliciesTimeRestrictionToInsert
+        )
         {
             using var connection = _databaseConnectionFactory.GetConnection();
             connection.Open();
@@ -88,7 +113,40 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
                 IdsExcludedSubscriberList = contactPoliciesToInsert.ExcludedSubscribersLists.Select(s => s.Id)
             }, transaction);
 
+            // Time Restriction Update
+            await UpdateContactPoliciesTimeRestrictionAsync(connection, transaction, idUser, contactPoliciesTimeRestrictionToInsert);
+
             transaction.Commit();
+        }
+
+        private async Task UpdateContactPoliciesTimeRestrictionAsync(IDbConnection connection, IDbTransaction transaction, int idUser, ContactPoliciesTimeRestriction contactPoliciesTimeRestrictionToInsert)
+        {
+            if (contactPoliciesTimeRestrictionToInsert == null)
+            {
+                return;
+            }
+
+            const string upsertQuery =
+                @"update [UserContactPolicyTimeRestriction] set TimeSlotEnabled = @TimeSlotEnabled, HourFrom = @HourFrom, HourTo = @HourTo, WeekdaysEnabled = @WeekdaysEnabled
+                from [UserContactPolicyTimeRestriction] ucptr
+                where ucptr.IdUser = @IdUser;
+
+                if @@ROWCOUNT = 0
+                    insert into [UserContactPolicyTimeRestriction] ([IdUser] ,[TimeSlotEnabled] ,[HourFrom] ,[HourTo], [WeekdaysEnabled]) VALUES (@IdUser, @TimeSlotEnabled, @HourFrom, @HourTo, @WeekdaysEnabled);";
+
+            var affectedRows = await connection.ExecuteAsync(upsertQuery, new
+            {
+                IdUser = idUser,
+                contactPoliciesTimeRestrictionToInsert.TimeSlotEnabled,
+                contactPoliciesTimeRestrictionToInsert.HourFrom,
+                contactPoliciesTimeRestrictionToInsert.HourTo,
+                contactPoliciesTimeRestrictionToInsert.WeekdaysEnabled
+            }, transaction);
+
+            if (affectedRows == 0)
+            {
+                throw new Exception("User Contact Policy Time Restriction could not be updated");
+            }
         }
 
         public async Task<int?> GetIdUserByAccountName(string accountName)

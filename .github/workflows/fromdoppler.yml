@@ -19,4 +19,4 @@ jobs:
     secrets: inherit
     with:
       dockerfile-path: "Dockerfile"
-      dockerhub-image-name: "doppler-contact-policies-api"
+      docker-image-name: "doppler-contact-policies-api"

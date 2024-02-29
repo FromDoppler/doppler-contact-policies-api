@@ -7,5 +7,6 @@ namespace Doppler.ContactPolicies.Data.Access.Entities
         public int? HourFrom { get; set; }
         public int? HourTo { get; set; }
         public bool WeekdaysEnabled { get; set; }
+        public int TimeZoneOffsetMinutes { get; set; }
     }
 }

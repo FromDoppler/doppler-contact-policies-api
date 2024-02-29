@@ -55,9 +55,11 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
                     ucptr.HourFrom [HourFrom],
                     ucptr.HourTo [HourTo],
                     ucptr.WeekdaysEnabled [WeekdaysEnabled],
-                    u.Email [AccountName]
+                    u.Email [AccountName],
+                    utz.Offset [TimeZoneOffsetMinutes]
                 from [User] u
                 left join [UserContactPolicyTimeRestriction] ucptr on u.IdUser = ucptr.IdUser
+                left join [UserTimeZone] utz on u.IdUserTimeZone = utz.IdUserTimeZone
                 where u.IdUser = @IdUser;";
 
             var queryParams = new { IdUser = idUser };

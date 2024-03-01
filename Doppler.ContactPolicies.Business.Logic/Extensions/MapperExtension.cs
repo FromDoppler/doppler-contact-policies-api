@@ -1,5 +1,6 @@
 using Doppler.ContactPolicies.Business.Logic.DTO;
 using Doppler.ContactPolicies.Data.Access.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -70,6 +71,32 @@ namespace Doppler.ContactPolicies.Business.Logic.Extensions
                 HourTo = contactPoliciesTimeRestrictionDto.HourTo,
                 WeekdaysEnabled = contactPoliciesTimeRestrictionDto.WeekdaysEnabled
             };
+        }
+
+        private static int? ApplyHourOffset(int? hour, int offset, bool convertHourToUTC)
+        {
+            if (!hour.HasValue || offset == 0)
+            {
+                return hour;
+            }
+
+            DateTime now = DateTime.Now;
+            DateTime auxDate = new DateTime(now.Year, now.Month, now.Day, hour.Value, 0, 0);
+
+            int offsetMinutes = offset * (convertHourToUTC ? -1 : 1);
+            DateTime resultDate = auxDate.AddMinutes(offsetMinutes);
+
+            var hour24 = resultDate.ToString("HH");
+
+            // when the offset is not an exact quantity of hours, for example: (GMT+09:30) Adelaide.
+            if (resultDate.Minute > 0)
+            {
+                return (int.Parse(hour24) + (convertHourToUTC ? 1 : 0)) % 24;
+            }
+            else
+            {
+                return int.Parse(hour24);
+            }
         }
     }
 }

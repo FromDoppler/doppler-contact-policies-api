@@ -50,8 +50,8 @@ namespace Doppler.ContactPolicies.Business.Logic.Extensions
             return new ContactPoliciesTimeRestrictionDto
             {
                 TimeSlotEnabled = timeRestriction.TimeSlotEnabled,
-                HourFrom = timeRestriction.HourFrom,
-                HourTo = timeRestriction.HourTo,
+                HourFrom = ApplyHourOffset(timeRestriction.HourFrom, timeRestriction.TimeZoneOffsetMinutes, false),
+                HourTo = ApplyHourOffset(timeRestriction.HourTo, timeRestriction.TimeZoneOffsetMinutes, false),
                 WeekdaysEnabled = timeRestriction.WeekdaysEnabled
             };
         }

@@ -57,7 +57,8 @@ namespace Doppler.ContactPolicies.Business.Logic.Extensions
         }
 
         public static ContactPoliciesTimeRestriction ToDao(
-            this ContactPoliciesTimeRestrictionDto contactPoliciesTimeRestrictionDto)
+            this ContactPoliciesTimeRestrictionDto contactPoliciesTimeRestrictionDto,
+            int timezoneOffsetMinutes)
         {
             if (contactPoliciesTimeRestrictionDto == null)
             {
@@ -67,8 +68,8 @@ namespace Doppler.ContactPolicies.Business.Logic.Extensions
             return new ContactPoliciesTimeRestriction
             {
                 TimeSlotEnabled = contactPoliciesTimeRestrictionDto.TimeSlotEnabled,
-                HourFrom = contactPoliciesTimeRestrictionDto.HourFrom,
-                HourTo = contactPoliciesTimeRestrictionDto.HourTo,
+                HourFrom = ApplyHourOffset(contactPoliciesTimeRestrictionDto.HourFrom, timezoneOffsetMinutes, true),
+                HourTo = ApplyHourOffset(contactPoliciesTimeRestrictionDto.HourTo, timezoneOffsetMinutes, true),
                 WeekdaysEnabled = contactPoliciesTimeRestrictionDto.WeekdaysEnabled
             };
         }

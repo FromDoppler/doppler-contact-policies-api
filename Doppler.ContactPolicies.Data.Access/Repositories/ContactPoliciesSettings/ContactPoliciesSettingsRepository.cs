@@ -160,6 +160,21 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
             return await connection.QueryFirstOrDefaultAsync<int?>(query, queryParams);
         }
 
+        public async Task<int> GetTimezoneOffsetMinutes(int idUser)
+        {
+            using var connection = _databaseConnectionFactory.GetConnection();
+            const string query =
+                @"select
+                    utz.Offset
+                from [User] u
+                left join [UserTimeZone] utz on u.IdUserTimeZone = utz.IdUserTimeZone
+                where u.IdUser = @IdUser";
+
+            var queryParams = new { IdUser = idUser };
+            var result = await connection.QueryFirstOrDefaultAsync<int?>(query, queryParams);
+            return result?? 0;
+        }
+
         #endregion
     }
 }

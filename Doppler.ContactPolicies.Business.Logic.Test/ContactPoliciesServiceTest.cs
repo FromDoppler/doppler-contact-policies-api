@@ -25,6 +25,8 @@ namespace Doppler.ContactPolicies.Business.Logic.Test
                 .Create();
             var expectedTimeRestriction = fixture.Build<ContactPoliciesTimeRestriction>()
                 .With(x => x.AccountName, accountName)
+                .With(x => x.HourFrom, 1)
+                .With(x => x.HourTo, 2)
                 .Create();
 
             var contactPoliciesRepositoryMock = new Mock<IContactPoliciesSettingsRepository>();

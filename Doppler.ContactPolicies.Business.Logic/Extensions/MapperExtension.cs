@@ -6,6 +6,12 @@ using System.Linq;
 
 namespace Doppler.ContactPolicies.Business.Logic.Extensions
 {
+    public enum TimeZoneConversionEnum
+    {
+        CONVERT_TO_UTC,
+        CONVERT_TO_USERTIMEZONE,
+    }
+
     public static class MapperExtension
     {
         public static ContactPoliciesSettingsDto ToDto(
@@ -50,8 +56,8 @@ namespace Doppler.ContactPolicies.Business.Logic.Extensions
             return new ContactPoliciesTimeRestrictionDto
             {
                 TimeSlotEnabled = timeRestriction.TimeSlotEnabled,
-                HourFrom = ApplyHourOffset(timeRestriction.HourFrom, timeRestriction.TimeZoneOffsetMinutes, false),
-                HourTo = ApplyHourOffset(timeRestriction.HourTo, timeRestriction.TimeZoneOffsetMinutes, false),
+                HourFrom = ApplyHourOffset(timeRestriction.HourFrom, timeRestriction.TimeZoneOffsetMinutes, TimeZoneConversionEnum.CONVERT_TO_USERTIMEZONE),
+                HourTo = ApplyHourOffset(timeRestriction.HourTo, timeRestriction.TimeZoneOffsetMinutes, TimeZoneConversionEnum.CONVERT_TO_USERTIMEZONE),
                 WeekdaysEnabled = timeRestriction.WeekdaysEnabled
             };
         }
@@ -68,13 +74,13 @@ namespace Doppler.ContactPolicies.Business.Logic.Extensions
             return new ContactPoliciesTimeRestriction
             {
                 TimeSlotEnabled = contactPoliciesTimeRestrictionDto.TimeSlotEnabled,
-                HourFrom = ApplyHourOffset(contactPoliciesTimeRestrictionDto.HourFrom, timezoneOffsetMinutes, true),
-                HourTo = ApplyHourOffset(contactPoliciesTimeRestrictionDto.HourTo, timezoneOffsetMinutes, true),
+                HourFrom = ApplyHourOffset(contactPoliciesTimeRestrictionDto.HourFrom, timezoneOffsetMinutes, TimeZoneConversionEnum.CONVERT_TO_UTC),
+                HourTo = ApplyHourOffset(contactPoliciesTimeRestrictionDto.HourTo, timezoneOffsetMinutes, TimeZoneConversionEnum.CONVERT_TO_UTC),
                 WeekdaysEnabled = contactPoliciesTimeRestrictionDto.WeekdaysEnabled
             };
         }
 
-        private static int? ApplyHourOffset(int? hour, int offset, bool convertHourToUTC)
+        private static int? ApplyHourOffset(int? hour, int offset, TimeZoneConversionEnum conversion)
         {
             if (!hour.HasValue || offset == 0)
             {
@@ -84,7 +90,7 @@ namespace Doppler.ContactPolicies.Business.Logic.Extensions
             DateTime now = DateTime.Now;
             DateTime auxDate = new DateTime(now.Year, now.Month, now.Day, hour.Value, 0, 0);
 
-            int offsetMinutes = offset * (convertHourToUTC ? -1 : 1);
+            int offsetMinutes = offset * (conversion == TimeZoneConversionEnum.CONVERT_TO_UTC ? -1 : 1);
             DateTime resultDate = auxDate.AddMinutes(offsetMinutes);
 
             var hour24 = resultDate.ToString("HH");
@@ -92,7 +98,7 @@ namespace Doppler.ContactPolicies.Business.Logic.Extensions
             // when the offset is not an exact quantity of hours, for example: (GMT+09:30) Adelaide.
             if (resultDate.Minute > 0)
             {
-                return (int.Parse(hour24) + (convertHourToUTC ? 1 : 0)) % 24;
+                return (int.Parse(hour24) + (conversion == TimeZoneConversionEnum.CONVERT_TO_UTC ? 1 : 0)) % 24;
             }
             else
             {

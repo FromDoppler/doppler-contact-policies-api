@@ -172,7 +172,7 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
 
             var queryParams = new { IdUser = idUser };
             var result = await connection.QueryFirstOrDefaultAsync<int?>(query, queryParams);
-            return result?? 0;
+            return result ?? 0;
         }
 
         #endregion

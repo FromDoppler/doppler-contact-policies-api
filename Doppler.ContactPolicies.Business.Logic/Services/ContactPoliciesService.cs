@@ -28,7 +28,8 @@ namespace Doppler.ContactPolicies.Business.Logic.Services
         public async Task UpdateContactPoliciesSettingsAsync(int idUser, ContactPoliciesSettingsDto contactPoliciesSettings)
         {
             var contactPoliciesToUpdate = contactPoliciesSettings.ToDao();
-            var timeRestrictionToUpdate = contactPoliciesSettings.TimeRestriction.ToDao();
+            var timezoneOffsetMinutes = await _contactPoliciesSettingsRepository.GetTimezoneOffsetMinutes(idUser);
+            var timeRestrictionToUpdate = contactPoliciesSettings.TimeRestriction.ToDao(timezoneOffsetMinutes);
             await _contactPoliciesSettingsRepository.UpdateContactPoliciesSettingsAsync(idUser, contactPoliciesToUpdate, timeRestrictionToUpdate);
         }
 

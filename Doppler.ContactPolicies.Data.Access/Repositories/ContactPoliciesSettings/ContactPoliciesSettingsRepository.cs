@@ -55,9 +55,11 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
                     ucptr.HourFrom [HourFrom],
                     ucptr.HourTo [HourTo],
                     ucptr.WeekdaysEnabled [WeekdaysEnabled],
-                    u.Email [AccountName]
+                    u.Email [AccountName],
+                    utz.Offset [TimeZoneOffsetMinutes]
                 from [User] u
                 left join [UserContactPolicyTimeRestriction] ucptr on u.IdUser = ucptr.IdUser
+                left join [UserTimeZone] utz on u.IdUserTimeZone = utz.IdUserTimeZone
                 where u.IdUser = @IdUser;";
 
             var queryParams = new { IdUser = idUser };
@@ -156,6 +158,21 @@ namespace Doppler.ContactPolicies.Data.Access.Repositories.ContactPoliciesSettin
                 @"select IdUser from [User] u where u.Email = @Email";
             var queryParams = new { Email = accountName };
             return await connection.QueryFirstOrDefaultAsync<int?>(query, queryParams);
+        }
+
+        public async Task<int> GetTimezoneOffsetMinutes(int idUser)
+        {
+            using var connection = _databaseConnectionFactory.GetConnection();
+            const string query =
+                @"select
+                    utz.Offset
+                from [User] u
+                left join [UserTimeZone] utz on u.IdUserTimeZone = utz.IdUserTimeZone
+                where u.IdUser = @IdUser";
+
+            var queryParams = new { IdUser = idUser };
+            var result = await connection.QueryFirstOrDefaultAsync<int?>(query, queryParams);
+            return result ?? 0;
         }
 
         #endregion
